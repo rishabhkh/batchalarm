@@ -1,17 +1,34 @@
 package com.rishabhkh.nerdalarm;
 
-import android.support.v7.app.ActionBarActivity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.util.Calendar;
+
 
 public class AlarmActivity extends ActionBarActivity {
+    final String TAG = "Alarm";
+    AlarmManager mAlarmManager;
+    int mHour = 19;
+    int mMinute = 14;
+    Intent mIntent;
+    Calendar mCalendar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alarm);
+
+        mAlarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        mCalendar = Calendar.getInstance();
+
+        createAlarm("Alarm!", mHour, mMinute, 0);
     }
 
     @Override
@@ -35,4 +52,21 @@ public class AlarmActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    public void createAlarm(String label, int hour, int minute, int reqCode) {
+
+        mCalendar.set(mCalendar.HOUR_OF_DAY, mHour);
+        mCalendar.set(mCalendar.MINUTE, mMinute);
+        mIntent = new Intent(AlarmActivity.this, AlarmReceiver.class);
+        mIntent.putExtra("label", label);
+        Log.v(TAG, "Setting Alarm");
+        mAlarmManager.set(AlarmManager.RTC_WAKEUP, mCalendar.getTimeInMillis(), getPendingIntent(reqCode));
+
+    }
+
+    public PendingIntent getPendingIntent(int reqCode) {
+        return PendingIntent.getBroadcast(AlarmActivity.this, reqCode, mIntent, 0);
+    }
+
+
 }
