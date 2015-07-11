@@ -8,6 +8,8 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 
 import java.util.Calendar;
 
@@ -16,19 +18,28 @@ public class AlarmActivity extends ActionBarActivity {
     final String TAG = "Alarm";
     AlarmManager mAlarmManager;
     int mHour = 19;
-    int mMinute = 14;
+    int mMinute = 32;
     Intent mIntent;
     Calendar mCalendar;
+    int numberOfAlarms=5;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alarm);
 
+        Button button = (Button)findViewById(R.id.b1);
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                for(int i=0;i<=numberOfAlarms;i++) {
+                    createAlarm(String.valueOf(i), mHour, mMinute+i, i);
+                }
+            }
+        });
+
+
         mAlarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         mCalendar = Calendar.getInstance();
-
-        createAlarm("Alarm!", mHour, mMinute, 0);
     }
 
     @Override
@@ -55,13 +66,12 @@ public class AlarmActivity extends ActionBarActivity {
 
     public void createAlarm(String label, int hour, int minute, int reqCode) {
 
-        mCalendar.set(mCalendar.HOUR_OF_DAY, mHour);
-        mCalendar.set(mCalendar.MINUTE, mMinute);
+        mCalendar.set(mCalendar.HOUR_OF_DAY, hour);
+        mCalendar.set(mCalendar.MINUTE, minute);
         mIntent = new Intent(AlarmActivity.this, AlarmReceiver.class);
         mIntent.putExtra("label", label);
-        Log.v(TAG, "Setting Alarm");
+        Log.v(TAG, "Setting Alarm:"+reqCode);
         mAlarmManager.set(AlarmManager.RTC_WAKEUP, mCalendar.getTimeInMillis(), getPendingIntent(reqCode));
-
     }
 
     public PendingIntent getPendingIntent(int reqCode) {
