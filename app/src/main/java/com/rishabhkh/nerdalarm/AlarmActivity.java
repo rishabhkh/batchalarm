@@ -1,5 +1,7 @@
 package com.rishabhkh.nerdalarm;
 
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -17,6 +19,8 @@ public class AlarmActivity extends ActionBarActivity {
     int mMinute;
     int numberOfAlarms=5;
     private TimePicker timePicker1;
+    Editor editor;
+    public SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +28,7 @@ public class AlarmActivity extends ActionBarActivity {
         setContentView(R.layout.activity_alarm);
 
         final AlarmHelper alarmHelper = new AlarmHelper(AlarmActivity.this);
+        sharedPreferences = getSharedPreferences("Alarm");
 
         timePicker1 = (TimePicker) findViewById(R.id.timePicker);
         Button button1 = (Button)findViewById(R.id.b1);
@@ -36,10 +41,16 @@ public class AlarmActivity extends ActionBarActivity {
                 for (int i = 0; i <= numberOfAlarms; i++) {
                     alarmHelper.createAlarm(String.valueOf(i), mHour, mMinute + i, i);
                 }
+                editor = sharedPreferences.edit();
+                editor.putInt("hour", mHour);
+                editor.putInt("minute", mMinute);
+                editor.commit();
             }
+
         });
 
         button2.setOnClickListener(new View.OnClickListener() {
+
             public void onClick(View v) {
                 alarmHelper.cancelAlarm(2);
             }
@@ -66,6 +77,15 @@ public class AlarmActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public SharedPreferences getSharedPreferences(String fileName){
+        SharedPreferences pref = getApplicationContext().getSharedPreferences(fileName, MODE_PRIVATE);
+        return pref;
+    }
+
+    public void getFromPreference(String key){
+        Log.v(TAG, String.valueOf(sharedPreferences.getInt(key,0)));
     }
 
 }
