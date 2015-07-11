@@ -1,8 +1,5 @@
 package com.rishabhkh.nerdalarm;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -10,36 +7,36 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-
-import java.util.Calendar;
+import android.widget.TimePicker;
 
 
 public class AlarmActivity extends ActionBarActivity {
+
     final String TAG = "Alarm";
-    AlarmManager mAlarmManager;
-    int mHour = 19;
-    int mMinute = 32;
-    Intent mIntent;
-    Calendar mCalendar;
+    int mHour;
+    int mMinute;
     int numberOfAlarms=5;
+    private TimePicker timePicker1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alarm);
 
+        final AlarmHelper alarmHelper = new AlarmHelper(AlarmActivity.this);
+
+        timePicker1 = (TimePicker) findViewById(R.id.timePicker);
         Button button = (Button)findViewById(R.id.b1);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                for(int i=0;i<=numberOfAlarms;i++) {
-                    createAlarm(String.valueOf(i), mHour, mMinute+i, i);
+                mHour = timePicker1.getCurrentHour();
+                mMinute = timePicker1.getCurrentMinute();
+                Log.v(TAG, "TimePicker Hour:" + mHour + "Minutes:" + mMinute);
+                for (int i = 0; i <= numberOfAlarms; i++) {
+                    alarmHelper.createAlarm(String.valueOf(i), mHour, mMinute + i, i);
                 }
             }
         });
-
-
-        mAlarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        mCalendar = Calendar.getInstance();
     }
 
     @Override
@@ -63,20 +60,5 @@ public class AlarmActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
-    public void createAlarm(String label, int hour, int minute, int reqCode) {
-
-        mCalendar.set(mCalendar.HOUR_OF_DAY, hour);
-        mCalendar.set(mCalendar.MINUTE, minute);
-        mIntent = new Intent(AlarmActivity.this, AlarmReceiver.class);
-        mIntent.putExtra("label", label);
-        Log.v(TAG, "Setting Alarm:"+reqCode);
-        mAlarmManager.set(AlarmManager.RTC_WAKEUP, mCalendar.getTimeInMillis(), getPendingIntent(reqCode));
-    }
-
-    public PendingIntent getPendingIntent(int reqCode) {
-        return PendingIntent.getBroadcast(AlarmActivity.this, reqCode, mIntent, 0);
-    }
-
 
 }
