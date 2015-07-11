@@ -26,8 +26,9 @@ public class AlarmActivity extends ActionBarActivity {
         final AlarmHelper alarmHelper = new AlarmHelper(AlarmActivity.this);
 
         timePicker1 = (TimePicker) findViewById(R.id.timePicker);
-        Button button = (Button)findViewById(R.id.b1);
-        button.setOnClickListener(new View.OnClickListener() {
+        Button button1 = (Button)findViewById(R.id.b1);
+        Button button2 = (Button)findViewById(R.id.b2);
+        button1.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 mHour = timePicker1.getCurrentHour();
                 mMinute = timePicker1.getCurrentMinute();
@@ -35,6 +36,12 @@ public class AlarmActivity extends ActionBarActivity {
                 for (int i = 0; i <= numberOfAlarms; i++) {
                     alarmHelper.createAlarm(String.valueOf(i), mHour, mMinute + i, i);
                 }
+            }
+        });
+
+        button2.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                alarmHelper.cancelAlarm(2);
             }
         });
     }

@@ -40,6 +40,11 @@ public class AlarmHelper {
         }
     }
 
+    public void cancelAlarm(int reqCode){
+        Log.v(TAG, "cancelling:"+reqCode );
+        mAlarmManager.cancel(getPendingIntent(reqCode));
+    }
+
     public PendingIntent getPendingIntent(int reqCode) {
         return PendingIntent.getBroadcast(mContext, reqCode, mIntent, 0);
     }
