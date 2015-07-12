@@ -1,5 +1,6 @@
 package com.rishabhkh.nerdalarm;
 
+import android.app.TimePickerDialog;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
@@ -8,51 +9,115 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
+import android.widget.ListView;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.TimePicker;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.List;
 
 public class AlarmActivity extends ActionBarActivity {
 
+
     final String TAG = "Alarm";
-    int mHour;
-    int mMinute;
-    int numberOfAlarms=5;
-    private TimePicker timePicker1;
+
+    SharedPreferences sharedPreferences;
     Editor editor;
-    public SharedPreferences sharedPreferences;
+
+    ListView listView;
+    Integer[] choices;
+    ArrayAdapter<String> arrayAdapter;
+
+    int numberOfAlarms;
+    int interval;
+
+    LinearLayout linearLayout;
+    TextView textView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alarm);
 
-        final AlarmHelper alarmHelper = new AlarmHelper(AlarmActivity.this);
-        sharedPreferences = getSharedPreferences("Alarm");
+        linearLayout = (LinearLayout)findViewById(R.id.layout);
+        Button addButton = (Button)findViewById(R.id.Add);
+        Button cancelButton = (Button)findViewById(R.id.Cancel);
+        Spinner numSpinner = (Spinner) findViewById(R.id.num);
+        Spinner intervalSpinner = (Spinner) findViewById(R.id.interval);
 
-        timePicker1 = (TimePicker) findViewById(R.id.timePicker);
-        Button button1 = (Button)findViewById(R.id.b1);
-        Button button2 = (Button)findViewById(R.id.b2);
-        button1.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                mHour = timePicker1.getCurrentHour();
-                mMinute = timePicker1.getCurrentMinute();
-                Log.v(TAG, "TimePicker Hour:" + mHour + "Minutes:" + mMinute);
-                for (int i = 0; i <= numberOfAlarms; i++) {
-                    alarmHelper.createAlarm(String.valueOf(i), mHour, mMinute + i, i);
-                }
-                editor = sharedPreferences.edit();
-                editor.putInt("hour", mHour);
-                editor.putInt("minute", mMinute);
-                editor.commit();
+        sharedPreferences = getApplicationContext().getSharedPreferences("Alarm",MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+        listView = new ListView(this);
+
+        choices = new Integer[] {1,2,5,10,15,20,25,30};
+        List<String> alarmList = new ArrayList<String>(Arrays.asList(detailArray()));
+        arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, alarmList);
+
+
+        if(sharedPreferences.getBoolean("flag", false)) {
+            initialiseListView();
+            listView.setAdapter(arrayAdapter);
+        }
+        else
+        {
+            textView = new TextView(this);
+            LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT);
+            textView.setLayoutParams(lp);
+            textView.setText("No Alarms Set");
+            linearLayout.addView(textView);
+        }
+        ArrayAdapter<Integer> choiceAdapter = new ArrayAdapter<Integer>(this,android.R.layout.simple_spinner_item, choices);
+        numSpinner.setAdapter(choiceAdapter);
+        intervalSpinner.setAdapter(choiceAdapter);
+
+        numSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                Object item = parent.getItemAtPosition(pos);
+                numberOfAlarms = (int)item;
             }
 
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+        intervalSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                Object item = parent.getItemAtPosition(pos);
+                interval= (int) item;
+            }
+
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
         });
 
-        button2.setOnClickListener(new View.OnClickListener() {
+
+        addButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                displayTimeDialogue();
+            }
+        });
+
+        cancelButton.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
-                alarmHelper.cancelAlarm(2);
+                AlarmHelper alarmHelper = new AlarmHelper(AlarmActivity.this);
+                alarmHelper.cancelMultipleAlarms();
+                arrayAdapter.clear();
+                arrayAdapter.notifyDataSetChanged();
+                linearLayout.removeView(listView);
+                textView = new TextView(AlarmActivity.this);
+                LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT);
+                textView.setLayoutParams(lp);
+                textView.setText("No Alarms Set");
+                linearLayout.addView(textView);
             }
         });
     }
@@ -79,13 +144,57 @@ public class AlarmActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public SharedPreferences getSharedPreferences(String fileName){
-        SharedPreferences pref = getApplicationContext().getSharedPreferences(fileName, MODE_PRIVATE);
-        return pref;
+    public void displayTimeDialogue(){
+        Calendar calendar = Calendar.getInstance();
+        TimePickerDialog tpd = new TimePickerDialog(this,
+                new TimePickerDialog.OnTimeSetListener() {
+
+                    @Override
+                    public void onTimeSet(TimePicker view, int hourOfDay,
+                                          int minute) {
+                        if(!sharedPreferences.getBoolean("flag", false)){
+                            linearLayout.removeView(textView);
+                            initialiseListView();
+                            Log.v(TAG, "Inside 1st Check");
+                            listView.setAdapter(arrayAdapter);
+                        }
+
+                        editor.putInt("hour", hourOfDay);
+                        editor.putInt("minute", minute);
+                        editor.putInt("numofalarms", numberOfAlarms);
+                        editor.putInt("interval", interval);
+                        editor.putBoolean("flag", true);
+                        editor.commit();
+                        AlarmHelper alarmHelper = new AlarmHelper(AlarmActivity.this);
+                        alarmHelper.createMultipleAlarms();
+                        arrayAdapter.clear();
+                        String[] alarmArray = detailArray();
+                        for(int i=0;i<numberOfAlarms;i++) {
+                            arrayAdapter.add(alarmArray[i]);
+                        }
+                        arrayAdapter.notifyDataSetChanged();
+                    }
+                }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true);
+        tpd.show();
     }
 
-    public void getFromPreference(String key){
-        Log.v(TAG, String.valueOf(sharedPreferences.getInt(key,0)));
+    public String[] detailArray(){
+        int hour = sharedPreferences.getInt("hour", 0);
+        int minute = sharedPreferences.getInt("minute", 0);
+        int noAlarms = sharedPreferences.getInt("numofalarms", 0);
+        int interval = sharedPreferences.getInt("interval", 0);
+        int total = 0;
+        String[] array = new String[noAlarms];
+        for(int i=0;i<noAlarms;i++){
+            total = minute+(interval*i);
+            array[i] = hour+":"+total;
+        }
+        return array;
     }
 
+    public void initialiseListView(){
+        LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT);
+        listView.setLayoutParams(lp);
+        linearLayout.addView(listView);
+    }
 }

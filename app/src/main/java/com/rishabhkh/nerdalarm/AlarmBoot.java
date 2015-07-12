@@ -1,4 +1,4 @@
-package com.rishabhkh.nerdalarm;
+/*package com.rishabhkh.nerdalarm;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -25,4 +25,4 @@ public class AlarmBoot extends BroadcastReceiver {
         }
 
     }
-}
+}*/

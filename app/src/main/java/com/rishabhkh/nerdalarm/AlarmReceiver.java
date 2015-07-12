@@ -11,9 +11,7 @@ public class AlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        Log.v(TAG, intent.getStringExtra("label"));
-
-
+        Log.v(TAG, ""+intent.getStringExtra("label"));
     }
 
 }
