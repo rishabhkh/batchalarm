@@ -48,28 +48,34 @@ public class AlarmHelper {
     public void createMultipleAlarms() {
         int totMinutes;
         String label;
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, mHour);
+        calendar.set(Calendar.MINUTE, mMinute);
+        calendar.set(Calendar.SECOND,0);
+        calendar.set(Calendar.MILLISECOND,0);
+        long time = calendar.getTimeInMillis();
 
         for(int i=0;i<mNoAlarms;i++){
+            time = time + (mInterval*60000*i);
             totMinutes = mMinute + (mInterval * i);
             label = mHour+":"+totMinutes;
-            createSingleAlarm(label, mHour, totMinutes, i);
+            createSingleAlarm(label, time, i);
+
         }
 
     }
 
-    public void createSingleAlarm(String label, int hour, int minute, int reqCode) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, hour);
-        calendar.set(Calendar.MINUTE, minute);
-        mIntent.putExtra("label", label);
+    public void createSingleAlarm(String label, long time, int reqCode) {
+
+        mIntent.putExtra("reqcode", reqCode);
         Log.v(TAG, label+"Setting Alarm");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             //Log.v(TAG, "KITKAT");
-            mAlarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), getPendingIntent(reqCode));
+            mAlarmManager.setExact(AlarmManager.RTC_WAKEUP, time, getPendingIntent(reqCode));
         }
         else{
             //Log.v(TAG, "NOTKITKAT");
-            mAlarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), getPendingIntent(reqCode));
+            mAlarmManager.set(AlarmManager.RTC_WAKEUP, time, getPendingIntent(reqCode));
         }
     }
 
