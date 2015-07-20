@@ -164,6 +164,7 @@ public class AlarmActivity extends ActionBarActivity {
                         editor.putInt("numofalarms", numberOfAlarms);
                         editor.putInt("interval", interval);
                         editor.putBoolean("flag", true);
+                        editor.putInt("startPopulating", 0);
                         editor.commit();
                         AlarmHelper alarmHelper = new AlarmHelper(AlarmActivity.this);
                         alarmHelper.createMultipleAlarms();
@@ -183,10 +184,11 @@ public class AlarmActivity extends ActionBarActivity {
         int minute = sharedPreferences.getInt("minute", 0);
         int noAlarms = sharedPreferences.getInt("numofalarms", 0);
         int interval = sharedPreferences.getInt("interval", 0);
+        int startpop = sharedPreferences.getInt("startPopulating", 0);
         int total = 0;
-        String[] array = new String[noAlarms];
-        for(int i=0;i<noAlarms;i++){
-            total = minute+(interval*i);
+        String[] array = new String[noAlarms-startpop];
+        for(int i=0;i<noAlarms-startpop;i++){
+            total = minute+(interval*(i+startpop));
             array[i] = hour+":"+total;
         }
         return array;

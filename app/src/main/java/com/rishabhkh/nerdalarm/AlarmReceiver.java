@@ -3,6 +3,7 @@ package com.rishabhkh.nerdalarm;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.RingtoneManager;
@@ -16,8 +17,12 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        inst = this;
-        Log.v(TAG, "" + intent.getIntExtra("reqcode",-1));
+        inst = this;int reqcode = intent.getIntExtra("reqcode",-1);
+        Log.v(TAG, "" +reqcode );
+        SharedPreferences sharedPreferences = context.getSharedPreferences("Alarm", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt("startPopulating", reqcode+1);
+        editor.commit();
         Uri alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
         if (alarmUri == null) {
             alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);

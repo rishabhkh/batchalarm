@@ -15,7 +15,7 @@ public class AlarmHelper {
     final String TAG = "AlarmHelper";
 
     AlarmManager mAlarmManager;
-    //Intent mIntent;
+    Intent mIntent;
     Context mContext;
     SharedPreferences sharedPreferences;
 
@@ -28,7 +28,8 @@ public class AlarmHelper {
         mContext = context ;
         sharedPreferences = context.getSharedPreferences("Alarm", Context.MODE_PRIVATE);
         mAlarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        //mIntent = new Intent(mContext, AlarmReceiver.class);
+        mIntent = new Intent(mContext, AlarmReceiver.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         mHour = sharedPreferences.getInt("hour", 0);
         mMinute = sharedPreferences.getInt("minute", 0);
         mNoAlarms = sharedPreferences.getInt("numofalarms", 0);
@@ -65,8 +66,8 @@ public class AlarmHelper {
     }
 
     public void createSingleAlarm(String label, long time, int reqCode) {
-        Intent intent = new Intent(mContext, AlarmReceiver.class);
-        intent.putExtra("reqcode", reqCode);
+        //Intent intent = new Intent(mContext, AlarmReceiver.class);
+        mIntent.putExtra("reqcode", reqCode);
         Log.v(TAG, label+"Setting Alarm");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             //Log.v(TAG, "KITKAT");
@@ -84,8 +85,8 @@ public class AlarmHelper {
     }
 
     public PendingIntent getPendingIntent(int reqCode) {
-        Intent intent = new Intent(mContext, AlarmReceiver.class);
-        return PendingIntent.getBroadcast(mContext, reqCode, intent, 0);
+        //Intent intent = new Intent(mContext, AlarmReceiver.class);
+        return PendingIntent.getBroadcast(mContext, reqCode, mIntent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
 }
