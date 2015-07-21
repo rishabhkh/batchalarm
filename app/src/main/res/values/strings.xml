@@ -8,4 +8,19 @@
     <string name="button_add">Add Alarm</string>
     <string name="button_cancel">Cancel Alarm</string>
     <string name="title_activity_alarm_notification">AlarmNotification</string>
+
+    <string name="pick_interval">Pick The Interval Between Alarms</string>
+    <string-array
+        name="interval_array">
+        <item>1</item>
+        <item>5</item>
+        <item>10</item>
+        <item>15</item>
+        <item>20</item>
+        <item>25</item>
+        <item>30</item>
+    </string-array>
+
+    <string name="pick_num_of_alarms">Pick The Number Of Alarms</string>
+
 </resources>

@@ -1,22 +1,19 @@
 package com.rishabhkh.nerdalarm;
 
+import android.app.AlertDialog;
 import android.app.TimePickerDialog;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
-import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.TimePicker;
 
 import java.util.ArrayList;
@@ -26,29 +23,49 @@ import java.util.List;
 
 public class AlarmActivity extends ActionBarActivity {
 
-
-    final String TAG = "Alarm";
+    private final String TAG = "Alarm";
+    private final int intervalArray[] = {1,5,10,15,20,25,30};
 
     SharedPreferences sharedPreferences;
     Editor editor;
 
     ListView listView;
-    Integer[] choices;
     ArrayAdapter<String> arrayAdapter;
 
-    int numberOfAlarms;
-    int interval;
-
-    LinearLayout linearLayout;
-    TextView textView;
-
+    int mNumberOfAlarms;
+    int mInterval;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alarm);
 
-        linearLayout = (LinearLayout)findViewById(R.id.layout);
+        FloatingActionButton addButton = (FloatingActionButton)findViewById(R.id.add);
+        listView =(ListView)findViewById(R.id.listview);
+
+        listView.setEmptyView(findViewById(R.id.empty));
+
+        sharedPreferences = getApplicationContext().getSharedPreferences("Alarm",MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+
+        addButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                createIntervalDialog();
+            }
+        });
+
+
+        String list[] = {"HIHIHIHI","HIHIHIHI","HIHIHIHI","HIHIHIHI","HIHIHIHI","HIHIHIHI","HIHIHIHI","HIHIHIHI","HIHIHIHI","HIHIHIHI","HIHIHIHI","HIHIHIHI"};
+        //String list[] = {};
+        List<String> alarmList = new ArrayList<String>(Arrays.asList(list));
+        arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, alarmList);
+        listView.setAdapter(arrayAdapter);
+
+
+
+
+
+        /*linearLayout = (LinearLayout)findViewById(R.id.layout);
         Button addButton = (Button)findViewById(R.id.Add);
         Button cancelButton = (Button)findViewById(R.id.Cancel);
         Spinner numSpinner = (Spinner) findViewById(R.id.num);
@@ -60,7 +77,7 @@ public class AlarmActivity extends ActionBarActivity {
 
         choices = new Integer[] {1,2,5,10,15,20,25,30};
         List<String> alarmList = new ArrayList<String>(Arrays.asList(detailArray()));
-        arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, alarmList);
+            arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, alarmList);
 
 
         if(sharedPreferences.getBoolean("flag", false)) {
@@ -119,7 +136,7 @@ public class AlarmActivity extends ActionBarActivity {
                 textView.setText("No Alarms Set");
                 linearLayout.addView(textView);
             }
-        });
+        });*/
     }
 
     @Override
@@ -144,38 +161,44 @@ public class AlarmActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void displayTimeDialogue(){
+    public void createIntervalDialog(){
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(AlarmActivity.this);
+        builder.setTitle(R.string.pick_interval)
+                .setItems(R.array.interval_array, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        mInterval = intervalArray[which];
+                        Log.v(TAG,"Interval="+mInterval);
+                        createNumberOfAlarmsDialog();
+                    }
+                });
+        builder.create().show();
+    }
+
+    public void createNumberOfAlarmsDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(AlarmActivity.this);
+        builder.setTitle(R.string.pick_num_of_alarms)
+                .setItems(R.array.interval_array, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        mNumberOfAlarms = intervalArray[which];
+                        Log.v(TAG,"NumOfAlarms="+mNumberOfAlarms);
+                        createTimePickerDialog();
+                    }
+                });
+        builder.create().show();
+    }
+
+    public void createTimePickerDialog(){
         Calendar calendar = Calendar.getInstance();
         TimePickerDialog tpd = new TimePickerDialog(this,
                 new TimePickerDialog.OnTimeSetListener() {
-
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay,
                                           int minute) {
-                        if(!sharedPreferences.getBoolean("flag", false)){
-                            linearLayout.removeView(textView);
-                            initialiseListView();
-                            Log.v(TAG, "Inside 1st Check");
-                            listView.setAdapter(arrayAdapter);
-                        }
-
-                        editor.putInt("hour", hourOfDay);
-                        editor.putInt("minute", minute);
-                        editor.putInt("numofalarms", numberOfAlarms);
-                        editor.putInt("interval", interval);
-                        editor.putBoolean("flag", true);
-                        editor.putInt("startPopulating", 0);
-                        editor.commit();
-                        AlarmHelper alarmHelper = new AlarmHelper(AlarmActivity.this);
-                        alarmHelper.createMultipleAlarms();
-                        arrayAdapter.clear();
-                        String[] alarmArray = detailArray();
-                        for(int i=0;i<numberOfAlarms;i++) {
-                            arrayAdapter.add(alarmArray[i]);
-                        }
-                        arrayAdapter.notifyDataSetChanged();
+                        Log.v(TAG,hourOfDay+":"+minute);
                     }
                 }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true);
+        //TODO: Set Custom Title
         tpd.show();
     }
 
@@ -192,11 +215,5 @@ public class AlarmActivity extends ActionBarActivity {
             array[i] = hour+":"+total;
         }
         return array;
-    }
-
-    public void initialiseListView(){
-        LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT);
-        listView.setLayoutParams(lp);
-        linearLayout.addView(listView);
     }
 }
