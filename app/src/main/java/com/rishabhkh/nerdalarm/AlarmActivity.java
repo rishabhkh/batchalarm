@@ -84,6 +84,13 @@ public class AlarmActivity extends AppCompatActivity implements LoaderManager.Lo
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_alarm, menu);
+        MenuItem menuItem = (MenuItem)menu.findItem(R.id.vibration);
+        if(PreferenceManager.getDefaultSharedPreferences(this).getInt("vibrateFlag",0)==1) {
+            menuItem.setIcon(R.drawable.vib_act);
+            vibcheck = true;
+        }
+
+
         return true;
     }
 

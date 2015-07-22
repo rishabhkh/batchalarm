@@ -43,6 +43,7 @@ public class AlarmNotification extends Activity {
         setContentView(R.layout.activity_alarm_notification);
 
         Button button = (Button)findViewById(R.id.stopalarm);
+        button.setAlpha((float)0.5);
 
         String uri = PreferenceManager.getDefaultSharedPreferences(this).getString("alarmUri", String.valueOf(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)));
         //Log.v("URI=",uri);
@@ -53,8 +54,10 @@ public class AlarmNotification extends Activity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mediaPlayer.release();
-                v.cancel();
+                if(mediaPlayer != null)
+                    mediaPlayer.release();
+                if(v != null)
+                    v.cancel();
                 AlarmNotification.this.finish();
             }
         });
@@ -67,12 +70,12 @@ public class AlarmNotification extends Activity {
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             public void run() {
-                if (mediaPlayer != null) {
+                if(mediaPlayer != null)
                     mediaPlayer.release();
+                if(v != null)
                     v.cancel();
                     AlarmNotification.this.finish();
                 }
-            }
         }, 5000);
 
 
