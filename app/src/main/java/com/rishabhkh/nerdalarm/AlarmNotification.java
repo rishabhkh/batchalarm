@@ -7,18 +7,23 @@ import android.media.MediaPlayer;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.PowerManager;
+import android.os.Vibrator;
+import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.os.Handler;
 
 
 public class AlarmNotification extends Activity {
     private PowerManager.WakeLock wl;
     MediaPlayer mediaPlayer;
+    Vibrator v;
+    long pattern[] = {0,1000,1000};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,26 +44,36 @@ public class AlarmNotification extends Activity {
 
         Button button = (Button)findViewById(R.id.stopalarm);
 
-        playAlarm();
+        String uri = PreferenceManager.getDefaultSharedPreferences(this).getString("alarmUri", String.valueOf(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)));
+        //Log.v("URI=",uri);
+        Uri alarmUri = Uri.parse(uri);
+
+        playAlarm(alarmUri);
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                //mediaPlayer.stop();
+            public void onClick(View view) {
                 mediaPlayer.release();
+                v.cancel();
                 AlarmNotification.this.finish();
             }
         });
+
+        if(PreferenceManager.getDefaultSharedPreferences(this).getInt("vibrateFlag",0)==1)
+        {
+            vibrate();
+        }
 
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             public void run() {
                 if (mediaPlayer != null) {
                     mediaPlayer.release();
+                    v.cancel();
                     AlarmNotification.this.finish();
                 }
             }
-        }, 55000);
+        }, 5000);
 
 
     }
@@ -92,10 +107,9 @@ public class AlarmNotification extends Activity {
             wl.release();
     }
 
-    public void playAlarm(){
-
-        Uri alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+    public void playAlarm(Uri alarmUri){
         if (alarmUri == null) {
+            //Log.v("Uri","null");
             alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         }
 
@@ -111,4 +125,14 @@ public class AlarmNotification extends Activity {
 
         }
     }
+
+
+    public void vibrate(){
+        Log.v("Vib","rate");
+        v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        // Vibrate for 500 milliseconds
+        v.vibrate(pattern,0);
+    }
+
+
 }

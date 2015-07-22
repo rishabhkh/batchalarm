@@ -1,12 +1,19 @@
 package com.rishabhkh.nerdalarm;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.TimePickerDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.media.AudioManager;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -31,6 +38,7 @@ public class AlarmActivity extends AppCompatActivity implements LoaderManager.Lo
     ListView listView;
     AlarmAdapter alarmAdapter;
     ContentResolver contentResolver;
+    boolean vibcheck = false;
 
     int mNumberOfAlarms;
     int mInterval;
@@ -40,6 +48,8 @@ public class AlarmActivity extends AppCompatActivity implements LoaderManager.Lo
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alarm);
         getSupportLoaderManager().initLoader(0, null, this);
+
+        setVolumeControlStream(AudioManager.STREAM_ALARM);
 
         FloatingActionButton addButton = (FloatingActionButton)findViewById(R.id.add);
         FloatingActionButton deleteButton = (FloatingActionButton)findViewById(R.id.delete);
@@ -59,11 +69,15 @@ public class AlarmActivity extends AppCompatActivity implements LoaderManager.Lo
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlarmHelper alarmHelper= new AlarmHelper(AlarmActivity.this);
+                AlarmHelper alarmHelper = new AlarmHelper(AlarmActivity.this);
                 alarmHelper.cancelMultipleAlarms();
-                contentResolver.delete(AlarmProvider.CONTENT_URI,null,null);
+                contentResolver.delete(AlarmProvider.CONTENT_URI, null, null);
             }
         });
+
+        //RingtoneManager rm = new RingtoneManager(this);
+        //Log.v(TAG, String.valueOf(rm.getRingtoneUri(1)));
+
     }
 
     @Override
@@ -81,8 +95,26 @@ public class AlarmActivity extends AppCompatActivity implements LoaderManager.Lo
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if (id == R.id.vibration) {
+            if(vibcheck){
+                SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+                editor.putInt("vibrateFlag", 0);
+                editor.commit();
+                item.setIcon(R.drawable.vib_deact);
+                vibcheck = false;
+
+            }
+            else {
+                item.setIcon(R.drawable.vib_act);
+                SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+                editor.putInt("vibrateFlag", 1);
+                editor.commit();
+                vibcheck = true;
+            }
+
+        }
+        else if(id == R.id.ringtone) {
+            displayRingtoneSelector();
         }
 
         return super.onOptionsItemSelected(item);
@@ -152,7 +184,39 @@ public class AlarmActivity extends AppCompatActivity implements LoaderManager.Lo
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-       alarmAdapter.swapCursor(data);
+        alarmAdapter.swapCursor(data);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK && requestCode == 5)
+        {
+            Uri uri = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
+
+
+            if (uri != null)
+            {
+                SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+                editor.putString("alarmUri", String.valueOf(uri));
+                editor.commit();
+                //Log.v(TAG, String.valueOf(uri));
+            }
+            else
+            {
+
+            }
+        }
+
+    }
+
+    public void displayRingtoneSelector(){
+        Intent intent = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALARM);
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Select Tone");
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, Uri.parse(PreferenceManager.getDefaultSharedPreferences(this).getString("alarmUri",null)));
+        this.startActivityForResult(intent, 5);
+
     }
 
     @Override

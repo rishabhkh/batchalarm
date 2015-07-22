@@ -8,6 +8,8 @@
     <string name="button_add">Add Alarm</string>
     <string name="button_cancel">Cancel Alarm</string>
     <string name="title_activity_alarm_notification">AlarmNotification</string>
+    <string name="vibration_action">Vibration</string>
+    <string name="ringtone_action">Ringtone</string>
 
     <string name="pick_interval">Pick The Interval Between Alarms</string>
     <string-array
