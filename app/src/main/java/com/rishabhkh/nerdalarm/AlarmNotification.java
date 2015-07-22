@@ -1,19 +1,24 @@
 package com.rishabhkh.nerdalarm;
 
+import android.app.Activity;
 import android.content.Context;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.PowerManager;
-import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.os.Handler;
 
 
-public class AlarmNotification extends ActionBarActivity {
+public class AlarmNotification extends Activity {
     private PowerManager.WakeLock wl;
+    MediaPlayer mediaPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,18 +33,34 @@ public class AlarmNotification extends ActionBarActivity {
                         WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "My Tag");
         wl.acquire();
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alarm_notification);
 
         Button button = (Button)findViewById(R.id.stopalarm);
+
+        playAlarm();
+
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.v("Inside Button","Hi");
-               AlarmReceiver alarmReceiver = AlarmReceiver.getInstance();
-                alarmReceiver.mediaPlayer.stop();
+                //mediaPlayer.stop();
+                mediaPlayer.release();
+                AlarmNotification.this.finish();
             }
         });
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                if (mediaPlayer != null) {
+                    mediaPlayer.release();
+                    AlarmNotification.this.finish();
+                }
+            }
+        }, 55000);
+
+
     }
 
     @Override
@@ -69,5 +90,25 @@ public class AlarmNotification extends ActionBarActivity {
         super.onStop();
         if (wl.isHeld())
             wl.release();
+    }
+
+    public void playAlarm(){
+
+        Uri alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+        if (alarmUri == null) {
+            alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        }
+
+        try {
+            mediaPlayer = new MediaPlayer();
+            mediaPlayer.setDataSource(this, alarmUri);
+            mediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
+            mediaPlayer.setLooping(true);
+            mediaPlayer.prepare();
+            mediaPlayer.start();
+        }
+        catch (Exception e) {
+
+        }
     }
 }

@@ -2,35 +2,35 @@ package com.rishabhkh.nerdalarm;
 
 import android.app.AlertDialog;
 import android.app.TimePickerDialog;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TimePicker;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.List;
+import com.rishabhkh.nerdalarm.data.AlarmContract.AlarmEntry;
+import com.rishabhkh.nerdalarm.data.AlarmProvider;
 
-public class AlarmActivity extends ActionBarActivity {
+import java.util.Calendar;
+
+public class AlarmActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private final String TAG = "Alarm";
     private final int intervalArray[] = {1,5,10,15,20,25,30};
 
-    SharedPreferences sharedPreferences;
-    Editor editor;
-
     ListView listView;
-    ArrayAdapter<String> arrayAdapter;
+    AlarmAdapter alarmAdapter;
+    ContentResolver contentResolver;
 
     int mNumberOfAlarms;
     int mInterval;
@@ -39,14 +39,16 @@ public class AlarmActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alarm);
+        getSupportLoaderManager().initLoader(0, null, this);
 
         FloatingActionButton addButton = (FloatingActionButton)findViewById(R.id.add);
+        FloatingActionButton deleteButton = (FloatingActionButton)findViewById(R.id.delete);
         listView =(ListView)findViewById(R.id.listview);
-
         listView.setEmptyView(findViewById(R.id.empty));
+        alarmAdapter = new AlarmAdapter(AlarmActivity.this, null, 0);
+        listView.setAdapter(alarmAdapter);
 
-        sharedPreferences = getApplicationContext().getSharedPreferences("Alarm",MODE_PRIVATE);
-        editor = sharedPreferences.edit();
+        contentResolver = getContentResolver();
 
         addButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -54,89 +56,14 @@ public class AlarmActivity extends ActionBarActivity {
             }
         });
 
-
-        String list[] = {"HIHIHIHI","HIHIHIHI","HIHIHIHI","HIHIHIHI","HIHIHIHI","HIHIHIHI","HIHIHIHI","HIHIHIHI","HIHIHIHI","HIHIHIHI","HIHIHIHI","HIHIHIHI"};
-        //String list[] = {};
-        List<String> alarmList = new ArrayList<String>(Arrays.asList(list));
-        arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, alarmList);
-        listView.setAdapter(arrayAdapter);
-
-
-
-
-
-        /*linearLayout = (LinearLayout)findViewById(R.id.layout);
-        Button addButton = (Button)findViewById(R.id.Add);
-        Button cancelButton = (Button)findViewById(R.id.Cancel);
-        Spinner numSpinner = (Spinner) findViewById(R.id.num);
-        Spinner intervalSpinner = (Spinner) findViewById(R.id.interval);
-
-        sharedPreferences = getApplicationContext().getSharedPreferences("Alarm",MODE_PRIVATE);
-        editor = sharedPreferences.edit();
-        listView = new ListView(this);
-
-        choices = new Integer[] {1,2,5,10,15,20,25,30};
-        List<String> alarmList = new ArrayList<String>(Arrays.asList(detailArray()));
-            arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, alarmList);
-
-
-        if(sharedPreferences.getBoolean("flag", false)) {
-            initialiseListView();
-            listView.setAdapter(arrayAdapter);
-        }
-        else
-        {
-            textView = new TextView(this);
-            LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT);
-            textView.setLayoutParams(lp);
-            textView.setText("No Alarms Set");
-            linearLayout.addView(textView);
-        }
-        ArrayAdapter<Integer> choiceAdapter = new ArrayAdapter<Integer>(this,android.R.layout.simple_spinner_item, choices);
-        numSpinner.setAdapter(choiceAdapter);
-        intervalSpinner.setAdapter(choiceAdapter);
-
-        numSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                Object item = parent.getItemAtPosition(pos);
-                numberOfAlarms = (int)item;
-            }
-
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
-        intervalSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                Object item = parent.getItemAtPosition(pos);
-                interval= (int) item;
-            }
-
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
-
-
-        addButton.setOnClickListener(new View.OnClickListener() {
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
             public void onClick(View v) {
-                displayTimeDialogue();
-            }
-        });
-
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-
-            public void onClick(View v) {
-                AlarmHelper alarmHelper = new AlarmHelper(AlarmActivity.this);
+                AlarmHelper alarmHelper= new AlarmHelper(AlarmActivity.this);
                 alarmHelper.cancelMultipleAlarms();
-                arrayAdapter.clear();
-                arrayAdapter.notifyDataSetChanged();
-                linearLayout.removeView(listView);
-                textView = new TextView(AlarmActivity.this);
-                LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT);
-                textView.setLayoutParams(lp);
-                textView.setText("No Alarms Set");
-                linearLayout.addView(textView);
+                contentResolver.delete(AlarmProvider.CONTENT_URI,null,null);
             }
-        });*/
+        });
     }
 
     @Override
@@ -168,7 +95,6 @@ public class AlarmActivity extends ActionBarActivity {
                 .setItems(R.array.interval_array, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         mInterval = intervalArray[which];
-                        Log.v(TAG,"Interval="+mInterval);
                         createNumberOfAlarmsDialog();
                     }
                 });
@@ -181,7 +107,6 @@ public class AlarmActivity extends ActionBarActivity {
                 .setItems(R.array.interval_array, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         mNumberOfAlarms = intervalArray[which];
-                        Log.v(TAG,"NumOfAlarms="+mNumberOfAlarms);
                         createTimePickerDialog();
                     }
                 });
@@ -195,25 +120,43 @@ public class AlarmActivity extends ActionBarActivity {
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay,
                                           int minute) {
-                        Log.v(TAG,hourOfDay+":"+minute);
+                       for (int i=0;i<mNumberOfAlarms;i++){
+                            ContentValues contentValues = new ContentValues();
+                            contentValues.put(AlarmEntry.COLUMN_HOUR,hourOfDay);
+                            contentValues.put(AlarmEntry.COLUMN_MINUTE,minute+(i*mInterval));
+                            contentValues.put(AlarmEntry.COLUMN_FLAG, 1);
+                            contentResolver.insert(AlarmProvider.CONTENT_URI, contentValues);
+                        }
+                        AlarmHelper alarmHelper = new AlarmHelper(AlarmActivity.this);
+                        alarmHelper.createMultipleAlarms();
                     }
                 }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true);
         //TODO: Set Custom Title
         tpd.show();
+
     }
 
-    public String[] detailArray(){
-        int hour = sharedPreferences.getInt("hour", 0);
-        int minute = sharedPreferences.getInt("minute", 0);
-        int noAlarms = sharedPreferences.getInt("numofalarms", 0);
-        int interval = sharedPreferences.getInt("interval", 0);
-        int startpop = sharedPreferences.getInt("startPopulating", 0);
-        int total = 0;
-        String[] array = new String[noAlarms-startpop];
-        for(int i=0;i<noAlarms-startpop;i++){
-            total = minute+(interval*(i+startpop));
-            array[i] = hour+":"+total;
-        }
-        return array;
+    public AlarmActivity() {
+        super();
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return new CursorLoader(AlarmActivity.this,
+                AlarmProvider.CONTENT_URI,
+                null,
+                null,
+                null,
+                null);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+       alarmAdapter.swapCursor(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        alarmAdapter.swapCursor(null);
     }
 }
