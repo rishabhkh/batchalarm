@@ -14,6 +14,6 @@ public class AlarmBoot extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         AlarmHelper alarmHelper = new AlarmHelper(context);
-        alarmHelper.createMultipleAlarms(0);
+        alarmHelper.createMultipleAlarms(0,0);
     }
 }

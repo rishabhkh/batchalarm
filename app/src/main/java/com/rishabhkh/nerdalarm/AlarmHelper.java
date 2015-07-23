@@ -36,7 +36,7 @@ public class AlarmHelper {
     }
 
     public void cancelMultipleAlarms() {
-        Cursor cursor = contentResolver.query(AlarmProvider.CONTENT_URI,null,null,null,null);
+        Cursor cursor = contentResolver.query(AlarmProvider.CONTENT_URI, null, null, null, null);
         int numOfAlarms = cursor.getCount();
         cursor.close();
         for (int i=1;i<=numOfAlarms; i++) {
@@ -44,31 +44,42 @@ public class AlarmHelper {
         }
     }
 
-    public void createMultipleAlarms(int flag) {
+    public void createMultipleAlarms(int toastFlag,int editToastFlag) {
         Cursor cursor = contentResolver.query(AlarmProvider.CONTENT_URI, null, null, null, null);
         int numOfAlarms = cursor.getCount();//Log.v(TAG, "Number of Alarms="+numOfAlarms);
         cursor.moveToFirst();
         int hour = cursor.getInt(cursor.getColumnIndex("hour"));
         int minute = cursor.getInt(cursor.getColumnIndex("minute"));
 
-        if(flag==1)
+        if(toastFlag==1)
             toastDifference(hour, minute);
 
         cursor.close();
         for(int i=1;i<=numOfAlarms;i++){
             //Log.v(TAG, "Loop i="+i);
-            createSingleAlarm(i);
+            createSingleAlarm(i,0,editToastFlag);
         }
     }
 
-    public void createSingleAlarm(int _ID) {
+    public void createSingleAlarm(int _ID,int toastFlag,int editToastFlag) {
         String id = "/"+_ID;
         Uri uri = Uri.parse(AlarmProvider.CONTENT_URI + id);
+
+        if(editToastFlag == 1) {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(AlarmContract.AlarmEntry.COLUMN_FLAG, 1);
+            contentResolver.update(uri, contentValues, null, null);
+        }
         Cursor cursor = contentResolver.query(uri, null, null, null, null);
         cursor.moveToFirst();
-        long time = timeInMillis(cursor.getInt(cursor.getColumnIndex("hour")), cursor.getInt(cursor.getColumnIndex("minute")));
+        int hour = cursor.getInt(cursor.getColumnIndex("hour"));
+        int minute = cursor.getInt(cursor.getColumnIndex("minute"));
+        long time = timeInMillis(hour, minute );
         int flag =  cursor.getInt(cursor.getColumnIndex("flag"));
         cursor.close();
+
+        if(toastFlag == 1)
+            toastDifference(hour, minute);
 
         if(flag==1){
             mIntent.putExtra("_ID", _ID);
@@ -102,14 +113,14 @@ public class AlarmHelper {
         long difference = alarmTime - currentTime;
         long diffHour = difference/3600000;
         long diffMinute = (difference%3600000)/60000;
-        String toastMessage = "First Alarm set "+diffHour +" hours "+diffMinute+" minutes from now.";
+        String toastMessage = "Alarm set "+diffHour +" hours "+diffMinute+" minutes from now.";
         if(diffHour==0) {
-            toastMessage = "First Alarm set "+diffMinute+" minutes from now.";
+            toastMessage = "Alarm set "+diffMinute+" minutes from now.";
             if(diffMinute==0)
-                toastMessage = "First Alarm set less than 1 minute from now.";
+                toastMessage = "Alarm set less than 1 minute from now.";
         }
         Toast.makeText(mContext, toastMessage,
-                Toast.LENGTH_LONG).show();
+                Toast.LENGTH_SHORT).show();
 
     }
 

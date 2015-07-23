@@ -40,6 +40,7 @@ public class AlarmActivity extends AppCompatActivity implements LoaderManager.Lo
     AlarmAdapter alarmAdapter;
     ContentResolver contentResolver;
     boolean vibcheck = false;
+    boolean selectcheck = false;
 
     int mNumberOfAlarms;
     int mInterval;
@@ -133,6 +134,21 @@ public class AlarmActivity extends AppCompatActivity implements LoaderManager.Lo
         else if(id == R.id.ringtone) {
             displayRingtoneSelector();
         }
+        else if(id == R.id.select){
+            if(selectcheck){
+                item.setIcon(R.drawable.add);
+                AlarmHelper alarmHelper = new AlarmHelper(this);
+                alarmHelper.cancelMultipleAlarms();
+                selectcheck = false;
+            }
+            else {
+                item.setIcon(R.drawable.del);
+                AlarmHelper alarmHelper = new AlarmHelper(this);
+                alarmHelper.createMultipleAlarms(1,1);
+                selectcheck = true;
+            }
+
+        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -177,7 +193,7 @@ public class AlarmActivity extends AppCompatActivity implements LoaderManager.Lo
                             contentResolver.insert(AlarmProvider.CONTENT_URI, contentValues);
                         }
                         AlarmHelper alarmHelper = new AlarmHelper(AlarmActivity.this);
-                        alarmHelper.createMultipleAlarms(1);
+                        alarmHelper.createMultipleAlarms(1,0);
                     }
                 }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true);
         //TODO: Set Custom Title
@@ -240,4 +256,7 @@ public class AlarmActivity extends AppCompatActivity implements LoaderManager.Lo
     public void onLoaderReset(Loader<Cursor> loader) {
         alarmAdapter.swapCursor(null);
     }
+
+
+
 }

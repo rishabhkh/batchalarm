@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +12,6 @@ import android.widget.CompoundButton;
 import android.widget.CursorAdapter;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.rishabhkh.nerdalarm.data.AlarmContract.AlarmEntry;
 import com.rishabhkh.nerdalarm.data.AlarmProvider;
@@ -59,14 +59,14 @@ public class AlarmAdapter extends CursorAdapter {
         s.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                Log.v("Inside Checked Change", "HI");
                 AlarmHelper alarmHelper = new AlarmHelper(c);
                 if(isChecked){
                     Uri uri = Uri.parse(AlarmProvider.CONTENT_URI+"/"+_ID);
                     ContentValues cv = new ContentValues();
                     cv.put(AlarmEntry.COLUMN_FLAG,1);
                     c.getContentResolver().update(uri, cv, null, null);
-                    alarmHelper.createSingleAlarm(_ID);
-                    toastDifference(hour,minute);
+                    alarmHelper.createSingleAlarm(_ID, 1, 0);
                 }
                 else{
                     alarmHelper.cancelSingleAlarm(_ID);
@@ -75,6 +75,7 @@ public class AlarmAdapter extends CursorAdapter {
             }
         });
      }
+
     public static String formatTime(int hour,int minute){
         Date date = new Date(AlarmHelper.timeInMillis(hour,minute));
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
@@ -87,20 +88,5 @@ public class AlarmAdapter extends CursorAdapter {
         return sdf.format(date);
     }
 
-    public void toastDifference(int hour,int minute){
-        long alarmTime = AlarmHelper.timeInMillis(hour, minute);
-        long currentTime = Calendar.getInstance().getTimeInMillis();
-        long difference = alarmTime - currentTime;
-        long diffHour = difference/3600000;
-        long diffMinute = (difference%3600000)/60000;
-        String toastMessage = "Alarm set "+diffHour +" hours "+diffMinute+" minutes from now.";
-        if(diffHour==0) {
-            toastMessage = "Alarm set "+diffMinute+" minutes from now.";
-            if(diffMinute==0)
-                toastMessage = "Alarm set less than 1 minute from now.";
-        }
-        Toast.makeText(mContext, toastMessage,
-                Toast.LENGTH_LONG).show();
-    }
 
 }
