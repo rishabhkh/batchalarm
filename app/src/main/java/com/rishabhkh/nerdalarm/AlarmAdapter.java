@@ -55,6 +55,7 @@ public class AlarmAdapter extends CursorAdapter {
         //Log.v("Adapter", formatTime(hour, minute));
         tv.setText(formatTime(hour, minute));
 
+        s.setOnCheckedChangeListener(null);
         s.setChecked(flag == 1);
         s.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
