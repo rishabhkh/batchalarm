@@ -61,6 +61,7 @@ public class AlarmHelper {
         long time = timeInMillis(cursor.getInt(cursor.getColumnIndex("hour")), cursor.getInt(cursor.getColumnIndex("minute")));
         int flag =  cursor.getInt(cursor.getColumnIndex("flag"));
         cursor.close();
+
         if(flag==1){
             mIntent.putExtra("_ID", _ID);
             Log.v(TAG, "Setting Alarm:" + _ID);
@@ -93,6 +94,8 @@ public class AlarmHelper {
         calendar.set(Calendar.MINUTE, minute);
         calendar.set(Calendar.SECOND, 0);
         //Log.v(TAG, "Converting:"+hour+":"+minute);
+        if(Calendar.getInstance().getTimeInMillis()>calendar.getTimeInMillis())
+            calendar.set(Calendar.DAY_OF_WEEK,calendar.get(Calendar.DAY_OF_WEEK)+1);
         return calendar.getTimeInMillis();
     }
 

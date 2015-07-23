@@ -69,9 +69,15 @@ public class AlarmAdapter extends CursorAdapter {
             }
         });
      }
-    public String formatTime(int hour,int minute){
+    public static String formatTime(int hour,int minute){
         Date date = new Date(AlarmHelper.timeInMillis(hour,minute));
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+        return sdf.format(date);
+    }
+
+    public static String formatDate(int hour,int minute){
+        Date date = new Date(AlarmHelper.timeInMillis(hour,minute));
+        SimpleDateFormat sdf = new SimpleDateFormat("c,dd/MM/yyyy");
         return sdf.format(date);
     }
 }

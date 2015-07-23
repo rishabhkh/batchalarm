@@ -10,6 +10,8 @@
     <string name="title_activity_alarm_notification">AlarmNotification</string>
     <string name="vibration_action">Vibration</string>
     <string name="ringtone_action">Ringtone</string>
+    <string name="dismiss">Dismiss This Alarm</string>
+    <string name="cancel">Cancel All Alarms</string>
 
     <string name="pick_interval">Pick The Interval Between Alarms</string>
     <string-array

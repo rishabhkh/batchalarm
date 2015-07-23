@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.drawable.GradientDrawable;
 import android.media.AudioManager;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -47,6 +48,7 @@ public class AlarmActivity extends AppCompatActivity implements LoaderManager.Lo
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alarm);
+
         getSupportLoaderManager().initLoader(0, null, this);
 
         setVolumeControlStream(AudioManager.STREAM_ALARM);
@@ -57,6 +59,9 @@ public class AlarmActivity extends AppCompatActivity implements LoaderManager.Lo
         listView.setEmptyView(findViewById(R.id.empty));
         alarmAdapter = new AlarmAdapter(AlarmActivity.this, null, 0);
         listView.setAdapter(alarmAdapter);
+        int[] colors = {0, 0xff2d2d2d, 0};
+        listView.setDivider(new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, colors));
+        listView.setDividerHeight(1);
 
         contentResolver = getContentResolver();
 
