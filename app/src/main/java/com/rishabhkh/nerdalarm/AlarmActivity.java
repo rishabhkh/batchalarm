@@ -67,6 +67,7 @@ public class AlarmActivity extends AppCompatActivity implements LoaderManager.Lo
 
         addButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                contentResolver.delete(AlarmProvider.CONTENT_URI, null, null);
                 createIntervalDialog();
             }
         });
@@ -74,15 +75,19 @@ public class AlarmActivity extends AppCompatActivity implements LoaderManager.Lo
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 AlarmHelper alarmHelper = new AlarmHelper(AlarmActivity.this);
                 alarmHelper.cancelMultipleAlarms();
-                contentResolver.delete(AlarmProvider.CONTENT_URI, null, null);
+
             }
         });
 
         //RingtoneManager rm = new RingtoneManager(this);
         //Log.v(TAG, String.valueOf(rm.getRingtoneUri(1)));
 
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+        editor.putString("alarmUri", String.valueOf(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)));
+        editor.commit();
     }
 
     @Override
@@ -172,7 +177,7 @@ public class AlarmActivity extends AppCompatActivity implements LoaderManager.Lo
                             contentResolver.insert(AlarmProvider.CONTENT_URI, contentValues);
                         }
                         AlarmHelper alarmHelper = new AlarmHelper(AlarmActivity.this);
-                        alarmHelper.createMultipleAlarms();
+                        alarmHelper.createMultipleAlarms(1);
                     }
                 }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true);
         //TODO: Set Custom Title

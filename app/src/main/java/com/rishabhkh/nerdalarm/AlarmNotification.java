@@ -50,7 +50,7 @@ public class AlarmNotification extends Activity {
         TextView timeView = (TextView)findViewById(R.id.currenttime);
         TextView dateView = (TextView)findViewById(R.id.currentdate);
         timeView.setText(AlarmAdapter.formatTime(Calendar.getInstance().get(Calendar.HOUR_OF_DAY),Calendar.getInstance().get(Calendar.MINUTE)));
-        dateView.setText(AlarmAdapter.formatDate(Calendar.getInstance().get(Calendar.HOUR_OF_DAY),Calendar.getInstance().get(Calendar.MINUTE)));
+        dateView.setText(AlarmAdapter.formatDate());
 
         String uri = PreferenceManager.getDefaultSharedPreferences(this).getString("alarmUri", String.valueOf(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)));
         //Log.v("URI=",uri);

@@ -10,6 +10,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.rishabhkh.nerdalarm.data.AlarmContract;
 import com.rishabhkh.nerdalarm.data.AlarmProvider;
@@ -43,9 +44,16 @@ public class AlarmHelper {
         }
     }
 
-    public void createMultipleAlarms() {
-        Cursor cursor = contentResolver.query(AlarmProvider.CONTENT_URI,null,null,null,null);
+    public void createMultipleAlarms(int flag) {
+        Cursor cursor = contentResolver.query(AlarmProvider.CONTENT_URI, null, null, null, null);
         int numOfAlarms = cursor.getCount();//Log.v(TAG, "Number of Alarms="+numOfAlarms);
+        cursor.moveToFirst();
+        int hour = cursor.getInt(cursor.getColumnIndex("hour"));
+        int minute = cursor.getInt(cursor.getColumnIndex("minute"));
+
+        if(flag==1)
+            toastDifference(hour, minute);
+
         cursor.close();
         for(int i=1;i<=numOfAlarms;i++){
             //Log.v(TAG, "Loop i="+i);
@@ -79,13 +87,30 @@ public class AlarmHelper {
         mAlarmManager.cancel(getPendingIntent(_ID));
         ContentValues contentValues = new ContentValues();
         contentValues.put(AlarmContract.AlarmEntry.COLUMN_FLAG, "0");
-        Uri uri = Uri.parse(AlarmProvider.CONTENT_URI+"/"+_ID);
-        contentResolver.update(uri,contentValues,null,null);
+        Uri uri = Uri.parse(AlarmProvider.CONTENT_URI + "/" + _ID);
+        contentResolver.update(uri, contentValues, null, null);
     }
 
     public PendingIntent getPendingIntent(int _ID) {
         //Intent intent = new Intent(mContext, AlarmReceiver.class);
         return PendingIntent.getBroadcast(mContext, _ID, mIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+
+    public void toastDifference(int hour,int minute){
+        long alarmTime = timeInMillis(hour, minute);
+        long currentTime = Calendar.getInstance().getTimeInMillis();
+        long difference = alarmTime - currentTime;
+        long diffHour = difference/3600000;
+        long diffMinute = (difference%3600000)/60000;
+        String toastMessage = "First Alarm set "+diffHour +" hours "+diffMinute+" minutes from now.";
+        if(diffHour==0) {
+            toastMessage = "First Alarm set "+diffMinute+" minutes from now.";
+            if(diffMinute==0)
+                toastMessage = "First Alarm set less than 1 minute from now.";
+        }
+        Toast.makeText(mContext, toastMessage,
+                Toast.LENGTH_LONG).show();
+
     }
 
     public static long timeInMillis(int hour, int minute){

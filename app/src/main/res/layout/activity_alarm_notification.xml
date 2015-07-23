@@ -14,13 +14,13 @@
             android:id="@+id/currenttime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Place"
+            android:text=""
             android:textSize="80dp"/>
         <TextView
             android:id="@+id/currentdate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Placeholder"
+            android:text=""
             android:textSize="20dp"/>
     </LinearLayout>
 
