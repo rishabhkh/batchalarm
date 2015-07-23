@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,7 +59,7 @@ public class AlarmAdapter extends CursorAdapter {
         s.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                Log.v("Inside Checked Change", "HI");
+                //Log.v("Inside Checked Change", "HI");
                 AlarmHelper alarmHelper = new AlarmHelper(c);
                 if(isChecked){
                     Uri uri = Uri.parse(AlarmProvider.CONTENT_URI+"/"+_ID);

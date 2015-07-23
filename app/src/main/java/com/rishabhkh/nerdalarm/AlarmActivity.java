@@ -40,7 +40,7 @@ public class AlarmActivity extends AppCompatActivity implements LoaderManager.Lo
     AlarmAdapter alarmAdapter;
     ContentResolver contentResolver;
     boolean vibcheck = false;
-    boolean selectcheck = false;
+    boolean selectcheck = true;
 
     int mNumberOfAlarms;
     int mInterval;
@@ -55,7 +55,7 @@ public class AlarmActivity extends AppCompatActivity implements LoaderManager.Lo
         setVolumeControlStream(AudioManager.STREAM_ALARM);
 
         FloatingActionButton addButton = (FloatingActionButton)findViewById(R.id.add);
-        FloatingActionButton deleteButton = (FloatingActionButton)findViewById(R.id.delete);
+        //FloatingActionButton deleteButton = (FloatingActionButton)findViewById(R.id.delete);
         listView =(ListView)findViewById(R.id.listview);
         listView.setEmptyView(findViewById(R.id.empty));
         alarmAdapter = new AlarmAdapter(AlarmActivity.this, null, 0);
@@ -68,12 +68,14 @@ public class AlarmActivity extends AppCompatActivity implements LoaderManager.Lo
 
         addButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                AlarmHelper alarmHelper = new AlarmHelper(AlarmActivity.this);
+                alarmHelper.cancelMultipleAlarms();
                 contentResolver.delete(AlarmProvider.CONTENT_URI, null, null);
                 createIntervalDialog();
             }
         });
 
-        deleteButton.setOnClickListener(new View.OnClickListener() {
+        /*deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -81,7 +83,7 @@ public class AlarmActivity extends AppCompatActivity implements LoaderManager.Lo
                 alarmHelper.cancelMultipleAlarms();
 
             }
-        });
+        });*/
 
         //RingtoneManager rm = new RingtoneManager(this);
         //Log.v(TAG, String.valueOf(rm.getRingtoneUri(1)));

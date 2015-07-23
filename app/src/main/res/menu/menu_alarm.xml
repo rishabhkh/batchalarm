@@ -12,5 +12,5 @@
 
     <item android:id="@+id/select" android:title="@string/ringtone_action"
         android:orderInCategory="100" app:showAsAction="always"
-        android:icon="@drawable/add"/>
+        android:icon="@drawable/del"/>
 </menu>
