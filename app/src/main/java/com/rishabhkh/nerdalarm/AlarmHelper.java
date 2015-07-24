@@ -53,7 +53,7 @@ public class AlarmHelper {
             int minute = cursor.getInt(cursor.getColumnIndex(AlarmContract.AlarmEntry.COLUMN_MINUTE));
 
             if(toastFlag==1)
-                toastDifference(hour, minute);
+                toastDifference(hour, minute,1);
 
 
             for(int i=1;i<=numOfAlarms;i++) {
@@ -82,7 +82,7 @@ public class AlarmHelper {
         cursor.close();
 
         if(toastFlag == 1)
-            toastDifference(hour, minute);
+            toastDifference(hour, minute,0);
 
         if(flag==1){
             mIntent.putExtra("_ID", _ID);
@@ -110,17 +110,28 @@ public class AlarmHelper {
         return PendingIntent.getBroadcast(mContext, _ID, mIntent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
-    public void toastDifference(int hour,int minute){
+    public void toastDifference(int hour,int minute,int firstFlag){
         long alarmTime = timeInMillis(hour, minute);
         long currentTime = Calendar.getInstance().getTimeInMillis();
         long difference = alarmTime - currentTime;
         long diffHour = difference/3600000;
         long diffMinute = (difference%3600000)/60000;
-        String toastMessage = "Alarm set "+diffHour +" hours "+diffMinute+" minutes from now.";
-        if(diffHour==0) {
-            toastMessage = "Alarm set "+diffMinute+" minutes from now.";
-            if(diffMinute==0)
-                toastMessage = "Alarm set less than 1 minute from now.";
+        String toastMessage;
+        if(!(firstFlag==1)) {
+            toastMessage = "Alarm set " + diffHour + " hour(s) " + diffMinute + " minute(s) from now.";
+            if (diffHour == 0) {
+                toastMessage = "Alarm set " + diffMinute + " minute(s) from now.";
+                if (diffMinute == 0)
+                    toastMessage = "Alarm set less than 1 minute from now.";
+            }
+        }
+        else {
+            toastMessage = "First Alarm set " + diffHour + " hour(s) " + diffMinute + " minute(s) from now.";
+            if (diffHour == 0) {
+                toastMessage = "First Alarm set " + diffMinute + " minute(s) from now.";
+                if (diffMinute == 0)
+                    toastMessage = "First Alarm set less than 1 minute from now.";
+            }
         }
         Toast.makeText(mContext, toastMessage,
                 Toast.LENGTH_SHORT).show();

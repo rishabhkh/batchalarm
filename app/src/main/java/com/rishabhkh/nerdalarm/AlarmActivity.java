@@ -45,6 +45,8 @@ public class AlarmActivity extends AppCompatActivity implements LoaderManager.Lo
 
     int mNumberOfAlarms;
     int mInterval;
+    int mHourOfDay;
+    int mMinute;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +74,7 @@ public class AlarmActivity extends AppCompatActivity implements LoaderManager.Lo
                 AlarmHelper alarmHelper = new AlarmHelper(AlarmActivity.this);
                 alarmHelper.cancelMultipleAlarms();
                 contentResolver.delete(AlarmProvider.CONTENT_URI, null, null);
-                createIntervalDialog();
+                createTimePickerDialog();
             }
         });
 
@@ -99,7 +101,7 @@ public class AlarmActivity extends AppCompatActivity implements LoaderManager.Lo
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
+
         if (id == R.id.vibration) {
             if(vibcheck){
                 SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
@@ -131,6 +133,8 @@ public class AlarmActivity extends AppCompatActivity implements LoaderManager.Lo
                 AlarmHelper alarmHelper = new AlarmHelper(this);
                 alarmHelper.cancelMultipleAlarms();
                 selectcheck = false;
+                Toast.makeText(this, "Toggle:Cancelling All Alarms",
+                        Toast.LENGTH_SHORT).show();
             }
             else {
                 item.setIcon(R.drawable.ic_alarm_off_white_48dp);
@@ -151,7 +155,15 @@ public class AlarmActivity extends AppCompatActivity implements LoaderManager.Lo
                 .setItems(R.array.interval_array, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         mInterval = intervalArray[which];
-                        createNumberOfAlarmsDialog();
+                        for (int i=0;i<mNumberOfAlarms;i++){
+                            ContentValues contentValues = new ContentValues();
+                            contentValues.put(AlarmContract.AlarmEntry.COLUMN_HOUR,mHourOfDay);
+                            contentValues.put(AlarmContract.AlarmEntry.COLUMN_MINUTE,mMinute+(i*mInterval));
+                            contentValues.put(AlarmContract.AlarmEntry.COLUMN_FLAG, 1);
+                            contentResolver.insert(AlarmProvider.CONTENT_URI, contentValues);
+                        }
+                        AlarmHelper alarmHelper = new AlarmHelper(AlarmActivity.this);
+                        alarmHelper.createMultipleAlarms(1, 0);
                     }
                 });
         builder.create().show();
@@ -163,7 +175,7 @@ public class AlarmActivity extends AppCompatActivity implements LoaderManager.Lo
                 .setItems(R.array.interval_array, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         mNumberOfAlarms = intervalArray[which];
-                        createTimePickerDialog();
+                        createIntervalDialog();
                     }
                 });
         builder.create().show();
@@ -185,7 +197,6 @@ public class AlarmActivity extends AppCompatActivity implements LoaderManager.Lo
                     }
                 }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true);
         tpd.show();
-
     }
 
     public AlarmActivity() {
@@ -240,30 +251,16 @@ public class AlarmActivity extends AppCompatActivity implements LoaderManager.Lo
     }
 
     public void onTimeSetNoFix(int hourOfDay,int minute){
-        for (int i=0;i<mNumberOfAlarms;i++){
-            ContentValues contentValues = new ContentValues();
-            contentValues.put(AlarmContract.AlarmEntry.COLUMN_HOUR,hourOfDay);
-            contentValues.put(AlarmContract.AlarmEntry.COLUMN_MINUTE,minute+(i*mInterval));
-            contentValues.put(AlarmContract.AlarmEntry.COLUMN_FLAG, 1);
-            contentResolver.insert(AlarmProvider.CONTENT_URI, contentValues);
-        }
-        AlarmHelper alarmHelper = new AlarmHelper(AlarmActivity.this);
-        alarmHelper.createMultipleAlarms(1, 0);
-        //return 0;
+        mHourOfDay=hourOfDay;
+        mMinute=minute;
+        createNumberOfAlarmsDialog();
     }
 
     public void onTimeSetBugFixed(int hourOfDay,int minute,int count){
         if(count == 1) {
-            for (int i = 0; i < mNumberOfAlarms; i++) {
-                ContentValues contentValues = new ContentValues();
-                contentValues.put(AlarmContract.AlarmEntry.COLUMN_HOUR, hourOfDay);
-                contentValues.put(AlarmContract.AlarmEntry.COLUMN_MINUTE, minute + (i * mInterval));
-                contentValues.put(AlarmContract.AlarmEntry.COLUMN_FLAG, 1);
-                contentResolver.insert(AlarmProvider.CONTENT_URI, contentValues);
-            }
-            AlarmHelper alarmHelper = new AlarmHelper(AlarmActivity.this);
-            alarmHelper.createMultipleAlarms(1, 0);
+            mHourOfDay=hourOfDay;
+            mMinute=minute;
+            createNumberOfAlarmsDialog();
         }
-        //return count++;
     }
 }
