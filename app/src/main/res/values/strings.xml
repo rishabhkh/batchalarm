@@ -6,7 +6,7 @@
     <string name="no_alarms_message">No Alarms Found</string>
 
     <string name="menu_vibration">Vibration</string>
-    <string name="menu_ringtone">Ringtone</string>
+    <string name="menu_ringtone">Select Ringtone</string>
     <string name="menu_bulk">Act/Deact All</string>
 
     <string name="notification_button_dismiss_this">Dismiss This Alarm</string>
