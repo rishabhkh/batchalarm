@@ -48,9 +48,18 @@ public class AlarmActivity extends AppCompatActivity implements LoaderManager.Lo
     int mHourOfDay;
     int mMinute;
 
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_alarm);
 
         getSupportLoaderManager().initLoader(0, null, this);
@@ -63,7 +72,7 @@ public class AlarmActivity extends AppCompatActivity implements LoaderManager.Lo
         listView.setEmptyView(findViewById(R.id.empty));
         alarmAdapter = new AlarmAdapter(AlarmActivity.this, null, 0);
         listView.setAdapter(alarmAdapter);
-        int[] colors = {-10, 0xff2d2d2d, -10};
+        int[] colors = {0, 0xff2d2d2d, 0};
         listView.setDivider(new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, colors));
         listView.setDividerHeight(1);
 
@@ -77,6 +86,8 @@ public class AlarmActivity extends AppCompatActivity implements LoaderManager.Lo
                 createTimePickerDialog();
             }
         });
+
+
 
     }
 

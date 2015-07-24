@@ -126,11 +126,11 @@ public class AlarmHelper {
             }
         }
         else {
-            toastMessage = "First Alarm set " + diffHour + " hour(s) " + diffMinute + " minute(s) from now.";
+            toastMessage = "First alarm set " + diffHour + " hour(s) " + diffMinute + " minute(s) from now.";
             if (diffHour == 0) {
-                toastMessage = "First Alarm set " + diffMinute + " minute(s) from now.";
+                toastMessage = "First alarm set " + diffMinute + " minute(s) from now.";
                 if (diffMinute == 0)
-                    toastMessage = "First Alarm set less than 1 minute from now.";
+                    toastMessage = "First alarm set less than 1 minute from now.";
             }
         }
         Toast.makeText(mContext, toastMessage,
