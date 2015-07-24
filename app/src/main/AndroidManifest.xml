@@ -10,7 +10,7 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="" >
+        android:theme="@style/AlertDialog.AppCompat" >
         <activity
             android:name=".AlarmActivity"
             android:label="@string/app_name"
