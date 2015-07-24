@@ -1,7 +1,6 @@
 package com.rishabhkh.nerdalarm;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.TimePickerDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -27,6 +26,7 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.TimePicker;
 import android.widget.Toast;
+import android.support.v7.app.AlertDialog;
 
 import com.rishabhkh.nerdalarm.data.AlarmContract;
 import com.rishabhkh.nerdalarm.data.AlarmProvider;
@@ -200,7 +200,7 @@ public class AlarmActivity extends AppCompatActivity implements LoaderManager.Lo
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay,
                                           int minute) {
-                        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT)
+                        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
                             onTimeSetBugFixed(hourOfDay,minute,count);
                         else
                             onTimeSetNoFix(hourOfDay, minute);
