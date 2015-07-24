@@ -13,6 +13,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.media.AudioManager;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
@@ -27,7 +28,7 @@ import android.widget.ListView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.rishabhkh.nerdalarm.data.AlarmContract.AlarmEntry;
+import com.rishabhkh.nerdalarm.data.AlarmContract;
 import com.rishabhkh.nerdalarm.data.AlarmProvider;
 
 import java.util.Calendar;
@@ -75,18 +76,6 @@ public class AlarmActivity extends AppCompatActivity implements LoaderManager.Lo
             }
         });
 
-        /*deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                AlarmHelper alarmHelper = new AlarmHelper(AlarmActivity.this);
-                alarmHelper.cancelMultipleAlarms();
-
-            }
-        });*/
-
-        //RingtoneManager rm = new RingtoneManager(this);
-        //Log.v(TAG, String.valueOf(rm.getRingtoneUri(1)));
     }
 
     @Override
@@ -184,18 +173,15 @@ public class AlarmActivity extends AppCompatActivity implements LoaderManager.Lo
         Calendar calendar = Calendar.getInstance();
         TimePickerDialog tpd = new TimePickerDialog(this,
                 new TimePickerDialog.OnTimeSetListener() {
+                    int count = 0;
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay,
                                           int minute) {
-                       for (int i=0;i<mNumberOfAlarms;i++){
-                            ContentValues contentValues = new ContentValues();
-                            contentValues.put(AlarmEntry.COLUMN_HOUR,hourOfDay);
-                            contentValues.put(AlarmEntry.COLUMN_MINUTE,minute+(i*mInterval));
-                            contentValues.put(AlarmEntry.COLUMN_FLAG, 1);
-                            contentResolver.insert(AlarmProvider.CONTENT_URI, contentValues);
-                        }
-                        AlarmHelper alarmHelper = new AlarmHelper(AlarmActivity.this);
-                        alarmHelper.createMultipleAlarms(1,0);
+                        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT)
+                            onTimeSetBugFixed(hourOfDay,minute,count);
+                        else
+                            onTimeSetNoFix(hourOfDay, minute);
+                        count++;
                     }
                 }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true);
         tpd.show();
@@ -253,6 +239,31 @@ public class AlarmActivity extends AppCompatActivity implements LoaderManager.Lo
         alarmAdapter.swapCursor(null);
     }
 
+    public void onTimeSetNoFix(int hourOfDay,int minute){
+        for (int i=0;i<mNumberOfAlarms;i++){
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(AlarmContract.AlarmEntry.COLUMN_HOUR,hourOfDay);
+            contentValues.put(AlarmContract.AlarmEntry.COLUMN_MINUTE,minute+(i*mInterval));
+            contentValues.put(AlarmContract.AlarmEntry.COLUMN_FLAG, 1);
+            contentResolver.insert(AlarmProvider.CONTENT_URI, contentValues);
+        }
+        AlarmHelper alarmHelper = new AlarmHelper(AlarmActivity.this);
+        alarmHelper.createMultipleAlarms(1, 0);
+        //return 0;
+    }
 
-
+    public void onTimeSetBugFixed(int hourOfDay,int minute,int count){
+        if(count == 1) {
+            for (int i = 0; i < mNumberOfAlarms; i++) {
+                ContentValues contentValues = new ContentValues();
+                contentValues.put(AlarmContract.AlarmEntry.COLUMN_HOUR, hourOfDay);
+                contentValues.put(AlarmContract.AlarmEntry.COLUMN_MINUTE, minute + (i * mInterval));
+                contentValues.put(AlarmContract.AlarmEntry.COLUMN_FLAG, 1);
+                contentResolver.insert(AlarmProvider.CONTENT_URI, contentValues);
+            }
+            AlarmHelper alarmHelper = new AlarmHelper(AlarmActivity.this);
+            alarmHelper.createMultipleAlarms(1, 0);
+        }
+        //return count++;
+    }
 }
