@@ -47,18 +47,21 @@ public class AlarmHelper {
     public void createMultipleAlarms(int toastFlag,int editFlag) {
         Cursor cursor = contentResolver.query(AlarmProvider.CONTENT_URI, null, null, null, null);
         int numOfAlarms = cursor.getCount();//Log.v(TAG, "Number of Alarms="+numOfAlarms);
-        cursor.moveToFirst();
-        int hour = cursor.getInt(cursor.getColumnIndex(AlarmContract.AlarmEntry.COLUMN_HOUR));
-        int minute = cursor.getInt(cursor.getColumnIndex(AlarmContract.AlarmEntry.COLUMN_MINUTE));
+        if(numOfAlarms!=0) {
+            cursor.moveToFirst();
+            int hour = cursor.getInt(cursor.getColumnIndex(AlarmContract.AlarmEntry.COLUMN_HOUR));
+            int minute = cursor.getInt(cursor.getColumnIndex(AlarmContract.AlarmEntry.COLUMN_MINUTE));
 
-        if(toastFlag==1)
-            toastDifference(hour, minute);
+            if(toastFlag==1)
+                toastDifference(hour, minute);
 
-        cursor.close();
-        for(int i=1;i<=numOfAlarms;i++){
-            //Log.v(TAG, "Loop i="+i);
-            createSingleAlarm(i,0,editFlag);
+
+            for(int i=1;i<=numOfAlarms;i++) {
+                //Log.v(TAG, "Loop i="+i);
+                createSingleAlarm(i, 0, editFlag);
+            }
         }
+        cursor.close();
     }
 
     public void createSingleAlarm(int _ID,int toastFlag,int editToastFlag) {
