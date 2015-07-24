@@ -44,7 +44,7 @@ public class AlarmHelper {
         }
     }
 
-    public void createMultipleAlarms(int toastFlag,int editToastFlag) {
+    public void createMultipleAlarms(int toastFlag,int editFlag) {
         Cursor cursor = contentResolver.query(AlarmProvider.CONTENT_URI, null, null, null, null);
         int numOfAlarms = cursor.getCount();//Log.v(TAG, "Number of Alarms="+numOfAlarms);
         cursor.moveToFirst();
@@ -57,7 +57,7 @@ public class AlarmHelper {
         cursor.close();
         for(int i=1;i<=numOfAlarms;i++){
             //Log.v(TAG, "Loop i="+i);
-            createSingleAlarm(i,0,editToastFlag);
+            createSingleAlarm(i,0,editFlag);
         }
     }
 
