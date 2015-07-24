@@ -48,8 +48,8 @@ public class AlarmHelper {
         Cursor cursor = contentResolver.query(AlarmProvider.CONTENT_URI, null, null, null, null);
         int numOfAlarms = cursor.getCount();//Log.v(TAG, "Number of Alarms="+numOfAlarms);
         cursor.moveToFirst();
-        int hour = cursor.getInt(cursor.getColumnIndex("hour"));
-        int minute = cursor.getInt(cursor.getColumnIndex("minute"));
+        int hour = cursor.getInt(cursor.getColumnIndex(AlarmContract.AlarmEntry.COLUMN_HOUR));
+        int minute = cursor.getInt(cursor.getColumnIndex(AlarmContract.AlarmEntry.COLUMN_MINUTE));
 
         if(toastFlag==1)
             toastDifference(hour, minute);
@@ -72,10 +72,10 @@ public class AlarmHelper {
         }
         Cursor cursor = contentResolver.query(uri, null, null, null, null);
         cursor.moveToFirst();
-        int hour = cursor.getInt(cursor.getColumnIndex("hour"));
-        int minute = cursor.getInt(cursor.getColumnIndex("minute"));
+        int hour = cursor.getInt(cursor.getColumnIndex(AlarmContract.AlarmEntry.COLUMN_HOUR));
+        int minute = cursor.getInt(cursor.getColumnIndex(AlarmContract.AlarmEntry.COLUMN_MINUTE));
         long time = timeInMillis(hour, minute );
-        int flag =  cursor.getInt(cursor.getColumnIndex("flag"));
+        int flag =  cursor.getInt(cursor.getColumnIndex(AlarmContract.AlarmEntry.COLUMN_FLAG));
         cursor.close();
 
         if(toastFlag == 1)

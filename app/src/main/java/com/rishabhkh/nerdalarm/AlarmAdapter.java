@@ -18,10 +18,8 @@ import com.rishabhkh.nerdalarm.data.AlarmProvider;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
-/**
- * Created by Rishabh on 7/21/2015.
- */
 public class AlarmAdapter extends CursorAdapter {
     Context mContext;
 
@@ -35,9 +33,7 @@ public class AlarmAdapter extends CursorAdapter {
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
-        View view = LayoutInflater.from(context).inflate(R.layout.list_item, parent, false);
-
-        return view;
+        return LayoutInflater.from(context).inflate(R.layout.list_item, parent, false);
     }
 
     @Override
@@ -78,13 +74,13 @@ public class AlarmAdapter extends CursorAdapter {
 
     public static String formatTime(int hour,int minute){
         Date date = new Date(AlarmHelper.timeInMillis(hour,minute));
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm",Locale.US);
         return sdf.format(date);
     }
 
     public static String formatDate(){
         Date date = new Date(Calendar.getInstance().getTimeInMillis());
-        SimpleDateFormat sdf = new SimpleDateFormat("c,dd/MM/yyyy");
+        SimpleDateFormat sdf = new SimpleDateFormat("c,dd/MM/yyyy", Locale.US);
         return sdf.format(date);
     }
 

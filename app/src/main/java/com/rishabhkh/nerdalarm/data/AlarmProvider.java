@@ -35,7 +35,7 @@ public class AlarmProvider extends ContentProvider {
         Context context = getContext();
         AlarmDBHelper dbHelper = new AlarmDBHelper(context);
         db = dbHelper.getWritableDatabase();
-        return (db == null)? false:true;
+        return (db!=null);
     }
 
     @Override
@@ -77,7 +77,7 @@ public class AlarmProvider extends ContentProvider {
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
-        int count = 0;
+        int count;
 
         switch (uriMatcher.match(uri)){
             case ALARMS:
@@ -100,7 +100,7 @@ public class AlarmProvider extends ContentProvider {
 
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-        int count = 0;
+        int count;
 
         switch (uriMatcher.match(uri)){
             case ALARMS:

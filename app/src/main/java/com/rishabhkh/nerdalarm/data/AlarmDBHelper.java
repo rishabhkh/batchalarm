@@ -1,16 +1,17 @@
 package com.rishabhkh.nerdalarm.data;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.media.RingtoneManager;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.rishabhkh.nerdalarm.data.AlarmContract.AlarmEntry;
 
-/**
- * Created by Rishabh on 7/21/2015.
- */
 public class AlarmDBHelper extends SQLiteOpenHelper {
+    Context mContext;
 
     private static final int DATABASE_VERSION = 1;
 
@@ -18,6 +19,7 @@ public class AlarmDBHelper extends SQLiteOpenHelper {
 
     public AlarmDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        mContext = context;
     }
 
     @Override
@@ -29,6 +31,9 @@ public class AlarmDBHelper extends SQLiteOpenHelper {
                 AlarmEntry.COLUMN_FLAG + " INTEGER NOT NULL "+" );";
         Log.v("HelperOnCreate", SQL_CREATE_ALARMS_TABLE);
         db.execSQL(SQL_CREATE_ALARMS_TABLE);
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(mContext).edit();
+        editor.putString("alarmUri", String.valueOf(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)));
+        editor.apply();
     }
 
     @Override

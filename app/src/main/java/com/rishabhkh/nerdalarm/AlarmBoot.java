@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 
 public class AlarmBoot extends BroadcastReceiver {
-    public final String TAG = "AlarmBoot";
 
 
     public AlarmBoot() {

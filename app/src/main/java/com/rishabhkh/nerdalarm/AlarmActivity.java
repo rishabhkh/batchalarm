@@ -25,6 +25,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.rishabhkh.nerdalarm.data.AlarmContract.AlarmEntry;
 import com.rishabhkh.nerdalarm.data.AlarmProvider;
@@ -33,7 +34,6 @@ import java.util.Calendar;
 
 public class AlarmActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private final String TAG = "Alarm";
     private final int intervalArray[] = {1,5,10,15,20,25,30};
 
     ListView listView;
@@ -60,7 +60,7 @@ public class AlarmActivity extends AppCompatActivity implements LoaderManager.Lo
         listView.setEmptyView(findViewById(R.id.empty));
         alarmAdapter = new AlarmAdapter(AlarmActivity.this, null, 0);
         listView.setAdapter(alarmAdapter);
-        int[] colors = {0, 0xff2d2d2d, 0};
+        int[] colors = {-10, 0xff2d2d2d, -10};
         listView.setDivider(new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, colors));
         listView.setDividerHeight(1);
 
@@ -87,17 +87,13 @@ public class AlarmActivity extends AppCompatActivity implements LoaderManager.Lo
 
         //RingtoneManager rm = new RingtoneManager(this);
         //Log.v(TAG, String.valueOf(rm.getRingtoneUri(1)));
-
-        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
-        editor.putString("alarmUri", String.valueOf(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)));
-        editor.commit();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_alarm, menu);
-        MenuItem menuItem = (MenuItem)menu.findItem(R.id.vibration);
+        MenuItem menuItem = menu.findItem(R.id.vibration);
         if(PreferenceManager.getDefaultSharedPreferences(this).getInt("vibrateFlag",0)==1) {
             menuItem.setIcon(R.drawable.vib_act);
             vibcheck = true;
@@ -119,17 +115,21 @@ public class AlarmActivity extends AppCompatActivity implements LoaderManager.Lo
             if(vibcheck){
                 SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
                 editor.putInt("vibrateFlag", 0);
-                editor.commit();
+                editor.apply();
                 item.setIcon(R.drawable.vib_deact);
                 vibcheck = false;
+                Toast.makeText(this, "Vibration Off",
+                        Toast.LENGTH_SHORT).show();
 
             }
             else {
                 item.setIcon(R.drawable.vib_act);
                 SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
                 editor.putInt("vibrateFlag", 1);
-                editor.commit();
+                editor.apply();
                 vibcheck = true;
+                Toast.makeText(this, "Vibration On",
+                        Toast.LENGTH_SHORT).show();
             }
 
         }
@@ -138,13 +138,13 @@ public class AlarmActivity extends AppCompatActivity implements LoaderManager.Lo
         }
         else if(id == R.id.select){
             if(selectcheck){
-                item.setIcon(R.drawable.add);
+                item.setIcon(R.drawable.ic_access_alarm_white_48dp);
                 AlarmHelper alarmHelper = new AlarmHelper(this);
                 alarmHelper.cancelMultipleAlarms();
                 selectcheck = false;
             }
             else {
-                item.setIcon(R.drawable.del);
+                item.setIcon(R.drawable.ic_alarm_off_white_48dp);
                 AlarmHelper alarmHelper = new AlarmHelper(this);
                 alarmHelper.createMultipleAlarms(1,1);
                 selectcheck = true;
@@ -198,7 +198,6 @@ public class AlarmActivity extends AppCompatActivity implements LoaderManager.Lo
                         alarmHelper.createMultipleAlarms(1,0);
                     }
                 }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true);
-        //TODO: Set Custom Title
         tpd.show();
 
     }
@@ -234,15 +233,10 @@ public class AlarmActivity extends AppCompatActivity implements LoaderManager.Lo
             {
                 SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
                 editor.putString("alarmUri", String.valueOf(uri));
-                editor.commit();
+                editor.apply();
                 //Log.v(TAG, String.valueOf(uri));
             }
-            else
-            {
-
-            }
         }
-
     }
 
     public void displayRingtoneSelector(){

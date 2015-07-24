@@ -2,15 +2,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" tools:context=".AlarmActivity">
 
-    <item android:id="@+id/vibration" android:title="@string/vibration_action"
-    android:orderInCategory="100" app:showAsAction="always"
+    <item android:id="@+id/vibration" android:title="@string/menu_vibration"
+    android:orderInCategory="100" app:showAsAction="ifRoom"
     android:icon="@drawable/vib_deact"/>
 
-    <item android:id="@+id/ringtone" android:title="@string/ringtone_action"
-        android:orderInCategory="100" app:showAsAction="always"
+    <item android:id="@+id/ringtone" android:title="@string/menu_ringtone"
+        android:orderInCategory="100" app:showAsAction="ifRoom"
         android:icon="@drawable/ring"/>
 
-    <item android:id="@+id/select" android:title="@string/ringtone_action"
-        android:orderInCategory="100" app:showAsAction="always"
-        android:icon="@drawable/del"/>
+    <item android:id="@+id/select" android:title="@string/menu_bulk"
+        android:orderInCategory="100" app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_alarm_off_white_48dp"/>
 </menu>

@@ -16,7 +16,8 @@
         android:textSize="50dp"
         android:layout_weight="6"
         android:layout_margin="10dp"
-        android:paddingLeft="10dp"/>
+        android:paddingLeft="10dp"
+        android:textColor="#ff333333"/>
 
     <Switch
         android:layout_width="0dp"
