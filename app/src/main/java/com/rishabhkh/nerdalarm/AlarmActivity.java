@@ -12,13 +12,13 @@ import android.graphics.drawable.GradientDrawable;
 import android.media.AudioManager;
 import android.media.RingtoneManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,11 +26,11 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.TimePicker;
 import android.widget.Toast;
-import android.support.v7.app.AlertDialog;
 
 import com.rishabhkh.nerdalarm.data.AlarmContract;
 import com.rishabhkh.nerdalarm.data.AlarmProvider;
 
+import java.lang.reflect.Field;
 import java.util.Calendar;
 
 public class AlarmActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -195,19 +195,27 @@ public class AlarmActivity extends AppCompatActivity implements LoaderManager.Lo
     public void createTimePickerDialog(){
         Calendar calendar = Calendar.getInstance();
         TimePickerDialog tpd = new TimePickerDialog(this,
-                new TimePickerDialog.OnTimeSetListener() {
-                    int count = 0;
-                    @Override
-                    public void onTimeSet(TimePicker view, int hourOfDay,
-                                          int minute) {
-                        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
-                            onTimeSetBugFixed(hourOfDay,minute,count);
-                        else
-                            onTimeSetNoFix(hourOfDay, minute);
-                        count++;
+                null, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true){
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if(which==BUTTON_POSITIVE){
+                    try{
+                        Field pickerField = TimePickerDialog.class.getDeclaredField("mTimePicker");
+                        pickerField.setAccessible(true);
+                        TimePicker picker = (TimePicker) pickerField.get(this);
+                        mHourOfDay = picker.getCurrentHour();
+                        mMinute = picker.getCurrentMinute();
+                        createNumberOfAlarmsDialog();
                     }
-                }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true);
+                    catch(Exception e){}
+                }
+                else
+                    cancel();
+            }
+        };
         tpd.show();
+
     }
 
     public AlarmActivity() {
@@ -261,17 +269,4 @@ public class AlarmActivity extends AppCompatActivity implements LoaderManager.Lo
         alarmAdapter.swapCursor(null);
     }
 
-    public void onTimeSetNoFix(int hourOfDay,int minute){
-        mHourOfDay=hourOfDay;
-        mMinute=minute;
-        createNumberOfAlarmsDialog();
-    }
-
-    public void onTimeSetBugFixed(int hourOfDay,int minute,int count){
-        if(count == 1) {
-            mHourOfDay=hourOfDay;
-            mMinute=minute;
-            createNumberOfAlarmsDialog();
-        }
-    }
 }
