@@ -19,7 +19,7 @@
         android:paddingLeft="10dp"
         android:textColor="#ff333333"/>
 
-    <android.support.v7.widget.SwitchCompat
+    <Switch
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:id="@+id/switch1"

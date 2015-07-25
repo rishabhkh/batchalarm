@@ -4,11 +4,12 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.support.v7.widget.SwitchCompat;
+import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.rishabhkh.nerdalarm.data.AlarmContract.AlarmEntry;
@@ -19,7 +20,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-public class AlarmAdapter extends android.support.v4.widget.CursorAdapter {
+public class AlarmAdapter extends CursorAdapter {
     Context mContext;
 
 
@@ -39,7 +40,7 @@ public class AlarmAdapter extends android.support.v4.widget.CursorAdapter {
     public void bindView(View view, Context context, Cursor cursor) {
         final Context c = context;
         TextView tv =(TextView) view.findViewById(R.id.listitem);
-        SwitchCompat s = (SwitchCompat) view.findViewById(R.id.switch1);
+        Switch s = (Switch) view.findViewById(R.id.switch1);
 
         final int hour = cursor.getInt(cursor.getColumnIndex(AlarmEntry.COLUMN_HOUR));
         final int minute = cursor.getInt(cursor.getColumnIndex(AlarmEntry.COLUMN_MINUTE));
