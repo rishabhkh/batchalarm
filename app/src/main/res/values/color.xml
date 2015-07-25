@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="action_bar_color">#ff3c3f42</color>
-    <color name="activity_background_color">#ffa8a9ab</color>
-    <color name="item_color">#ffdd4477</color>
+    <color name="action_bar_color">#ff003366</color>
+    <color name="activity_background_color">#ff004c99</color>
+    <color name="item_color">#ffffffff</color>
 </resources>

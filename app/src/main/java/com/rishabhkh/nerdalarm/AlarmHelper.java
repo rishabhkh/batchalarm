@@ -86,7 +86,7 @@ public class AlarmHelper {
 
         if(flag==1){
             mIntent.putExtra("_ID", _ID);
-            Log.v(TAG, "Setting Alarm:" + _ID);
+            Log.v(TAG, "Setting Alarm:" + _ID+":"+time);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 mAlarmManager.setExact(AlarmManager.RTC_WAKEUP, time, getPendingIntent(_ID));
             }
@@ -143,9 +143,14 @@ public class AlarmHelper {
         calendar.set(Calendar.HOUR_OF_DAY, hour);
         calendar.set(Calendar.MINUTE, minute);
         calendar.set(Calendar.SECOND, 0);
-        //Log.v(TAG, "Converting:"+hour+":"+minute);
-        if(Calendar.getInstance().getTimeInMillis()>calendar.getTimeInMillis())
-            calendar.set(Calendar.DAY_OF_WEEK,calendar.get(Calendar.DAY_OF_WEEK)+1);
+
+        long timeBefore = calendar.getTimeInMillis();
+        Log.v("Before",""+timeBefore);
+        if(Calendar.getInstance().getTimeInMillis()>timeBefore)
+            calendar.add(Calendar.DAY_OF_WEEK, 1);
+
+
+        Log.v("Before",""+calendar.getTimeInMillis());
         return calendar.getTimeInMillis();
     }
 
