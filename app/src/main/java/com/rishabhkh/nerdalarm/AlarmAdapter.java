@@ -20,7 +20,7 @@ import java.util.Date;
 import java.util.Locale;
 
 public class AlarmAdapter extends CursorAdapter {
-    Context mContext;Switch s;
+    Context mContext;
 
 
 
@@ -29,6 +29,9 @@ public class AlarmAdapter extends CursorAdapter {
         mContext = context;
 
     }
+
+
+
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
@@ -39,7 +42,7 @@ public class AlarmAdapter extends CursorAdapter {
     public void bindView(View view, Context context, Cursor cursor) {
         final Context c = context;
         TextView tv =(TextView) view.findViewById(R.id.listitem);
-        s = (Switch) view.findViewById(R.id.switch1);
+        Switch s = (Switch) view.findViewById(R.id.switch1);
 
         final int hour = cursor.getInt(cursor.getColumnIndex(AlarmEntry.COLUMN_HOUR));
         final int minute = cursor.getInt(cursor.getColumnIndex(AlarmEntry.COLUMN_MINUTE));
@@ -54,15 +57,18 @@ public class AlarmAdapter extends CursorAdapter {
             @Override
             public void onClick(View v) {
                 AlarmHelper alarmHelper = new AlarmHelper(c);
+                Switch s =(Switch)v;
                 if(s.isChecked()){
                     Uri uri = Uri.parse(AlarmProvider.CONTENT_URI+"/"+_ID);
                     ContentValues cv = new ContentValues();
                     cv.put(AlarmEntry.COLUMN_FLAG,1);
                     c.getContentResolver().update(uri, cv, null, null);
                     alarmHelper.createSingleAlarm(_ID, 1, 0);
+                    s.toggle();
                 }
                 else{
                     alarmHelper.cancelSingleAlarm(_ID);
+                    s.toggle();
                 }
             }
         });
