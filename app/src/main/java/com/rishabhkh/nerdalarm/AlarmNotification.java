@@ -13,7 +13,6 @@ import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.Calendar;
@@ -42,9 +41,7 @@ public class AlarmNotification extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alarm_notification);
 
-        Button button = (Button)findViewById(R.id.stopthisalarm);
-        Button cancelAllAlarms = (Button)findViewById(R.id.stopallalarms);
-        TextView timeView = (TextView)findViewById(R.id.currenttime);
+        TextView timeView = (TextView) findViewById(R.id.currenttime);
         TextView dateView = (TextView)findViewById(R.id.currentdate);
         timeView.setText(AlarmAdapter.formatTime(Calendar.getInstance().get(Calendar.HOUR_OF_DAY),Calendar.getInstance().get(Calendar.MINUTE)));
         dateView.setText(AlarmAdapter.formatDate());
@@ -55,34 +52,22 @@ public class AlarmNotification extends Activity {
 
         playAlarm(alarmUri);
 
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mediaPlayer != null)
-                    mediaPlayer.release();
-                if (v != null)
-                    v.cancel();
-                AlarmNotification.this.finish();
-            }
-        });
-
-        cancelAllAlarms.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mediaPlayer != null)
-                    mediaPlayer.release();
-                if (v != null)
-                    v.cancel();
-                AlarmNotification.this.finish();
-                AlarmHelper alarmHelper = new AlarmHelper(AlarmNotification.this);
-                alarmHelper.cancelMultipleAlarms();
-            }
-        });
 
         if(PreferenceManager.getDefaultSharedPreferences(this).getInt("vibrateFlag",0)==1)
         {
             vibrate();
         }
+
+        findViewById(R.id.linlayout).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(mediaPlayer != null)
+                    mediaPlayer.release();
+                if(v != null)
+                    v.cancel();
+                AlarmNotification.this.finish();
+            }
+        });
 
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {

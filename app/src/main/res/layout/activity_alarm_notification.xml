@@ -2,7 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.rishabhkh.nerdalarm.AlarmNotification"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:id="@+id/linlayout">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -30,28 +31,22 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:gravity="center">
 
-        <Button
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="@string/notification_button_dismiss_this"
-        android:id="@+id/stopthisalarm"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="5dp"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Alarm!"
+            android:textSize="30sp"/>
 
-        <Button
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="@string/notification_button_cancel_all"
-        android:id="@+id/stopallalarms"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-            android:layout_margin="5dp"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/message_dismiss"/>
+
     </LinearLayout>
 
 

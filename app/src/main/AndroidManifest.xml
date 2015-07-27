@@ -34,6 +34,7 @@
         </receiver>
 
         <activity
+            android:excludeFromRecents="true"
             android:name=".AlarmNotification"
             android:label="@string/title_activity_alarm_notification"
             android:screenOrientation="portrait">
