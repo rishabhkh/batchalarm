@@ -250,7 +250,6 @@ public class AlarmActivity extends AppCompatActivity implements LoaderManager.Lo
                 SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
                 editor.putString("alarmUri", String.valueOf(uri));
                 editor.apply();
-                //Log.v(TAG, String.valueOf(uri));
             }
         }
     }

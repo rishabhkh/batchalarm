@@ -9,7 +9,6 @@ public class AlarmContract {
         public static final String COLUMN_HOUR = "hour";
         public static final String COLUMN_MINUTE = "minute";
         public static final String COLUMN_FLAG = "flag";
-        //public static final String COLUMN_TONE = "tone";
     }
 
 }

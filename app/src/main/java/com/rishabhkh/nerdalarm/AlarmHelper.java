@@ -46,7 +46,7 @@ public class AlarmHelper {
 
     public void createMultipleAlarms(int toastFlag,int editFlag) {
         Cursor cursor = contentResolver.query(AlarmProvider.CONTENT_URI, null, null, null, null);
-        int numOfAlarms = cursor.getCount();//Log.v(TAG, "Number of Alarms="+numOfAlarms);
+        int numOfAlarms = cursor.getCount();
         if(numOfAlarms!=0) {
             cursor.moveToFirst();
             int hour = cursor.getInt(cursor.getColumnIndex(AlarmContract.AlarmEntry.COLUMN_HOUR));
@@ -57,7 +57,7 @@ public class AlarmHelper {
 
 
             for(int i=1;i<=numOfAlarms;i++) {
-                //Log.v(TAG, "Loop i="+i);
+
                 createSingleAlarm(i, 0, editFlag);
             }
         }
@@ -145,12 +145,9 @@ public class AlarmHelper {
         calendar.set(Calendar.SECOND, 0);
 
         long timeBefore = calendar.getTimeInMillis();
-        Log.v("Before",""+timeBefore);
+
         if(Calendar.getInstance().getTimeInMillis()>timeBefore)
             calendar.add(Calendar.DAY_OF_WEEK, 1);
-
-
-        Log.v("Before",""+calendar.getTimeInMillis());
         return calendar.getTimeInMillis();
     }
 

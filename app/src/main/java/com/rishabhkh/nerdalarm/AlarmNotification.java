@@ -11,7 +11,6 @@ import android.os.Handler;
 import android.os.PowerManager;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -51,7 +50,7 @@ public class AlarmNotification extends Activity {
         dateView.setText(AlarmAdapter.formatDate());
 
         String uri = PreferenceManager.getDefaultSharedPreferences(this).getString("alarmUri", String.valueOf(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)));
-        //Log.v("URI=",uri);
+
         Uri alarmUri = Uri.parse(uri);
 
         playAlarm(alarmUri);
@@ -108,7 +107,7 @@ public class AlarmNotification extends Activity {
 
     public void playAlarm(Uri alarmUri){
         if (alarmUri == null) {
-            //Log.v("Uri","null");
+
             alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         }
 
@@ -126,7 +125,7 @@ public class AlarmNotification extends Activity {
     }
 
     public void vibrate(){
-        Log.v("Vib","rate");
+
         v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         // Vibrate for 500 milliseconds
         v.vibrate(pattern,0);

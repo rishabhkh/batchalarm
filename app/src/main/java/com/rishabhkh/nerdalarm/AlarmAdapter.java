@@ -5,10 +5,10 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.v4.widget.CursorAdapter;
+import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import com.rishabhkh.nerdalarm.data.AlarmContract.AlarmEntry;
@@ -30,8 +30,10 @@ public class AlarmAdapter extends CursorAdapter {
 
     }
 
-
-
+    @Override
+   public View getView(int position, View convertView, ViewGroup parent) {
+       return super.getView(position, null, parent);
+    }
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
@@ -42,14 +44,13 @@ public class AlarmAdapter extends CursorAdapter {
     public void bindView(View view, Context context, Cursor cursor) {
         final Context c = context;
         TextView tv =(TextView) view.findViewById(R.id.listitem);
-        Switch s = (Switch) view.findViewById(R.id.switch1);
+        SwitchCompat s = (SwitchCompat) view.findViewById(R.id.switch1);
 
         final int hour = cursor.getInt(cursor.getColumnIndex(AlarmEntry.COLUMN_HOUR));
         final int minute = cursor.getInt(cursor.getColumnIndex(AlarmEntry.COLUMN_MINUTE));
         int flag = cursor.getInt(cursor.getColumnIndex(AlarmEntry.COLUMN_FLAG));
         final int _ID = cursor.getInt(cursor.getColumnIndex(AlarmEntry._ID));
 
-        //Log.v("Adapter", formatTime(hour, minute));
         tv.setText(formatTime(hour, minute));
 
         s.setChecked(flag == 1);
@@ -57,7 +58,7 @@ public class AlarmAdapter extends CursorAdapter {
             @Override
             public void onClick(View v) {
                 AlarmHelper alarmHelper = new AlarmHelper(c);
-                Switch s =(Switch)v;
+                SwitchCompat s =(SwitchCompat)v;
                 if(s.isChecked()){
                     Uri uri = Uri.parse(AlarmProvider.CONTENT_URI+"/"+_ID);
                     ContentValues cv = new ContentValues();

@@ -5,8 +5,8 @@ import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.media.RingtoneManager;
+import android.net.Uri;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import com.rishabhkh.nerdalarm.data.AlarmContract.AlarmEntry;
 
@@ -29,10 +29,12 @@ public class AlarmDBHelper extends SQLiteOpenHelper {
                 AlarmEntry.COLUMN_HOUR + " INTEGER NOT NULL, " +
                 AlarmEntry.COLUMN_MINUTE + " INTEGER NOT NULL, " +
                 AlarmEntry.COLUMN_FLAG + " INTEGER NOT NULL "+" );";
-        Log.v("HelperOnCreate", SQL_CREATE_ALARMS_TABLE);
         db.execSQL(SQL_CREATE_ALARMS_TABLE);
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(mContext).edit();
-        editor.putString("alarmUri", String.valueOf(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)));
+        Uri r = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+        if(r==null)
+            RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        editor.putString("alarmUri", String.valueOf(r));
         editor.apply();
     }
 
