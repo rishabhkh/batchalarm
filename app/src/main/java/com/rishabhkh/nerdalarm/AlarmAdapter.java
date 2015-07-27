@@ -8,7 +8,6 @@ import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -21,7 +20,7 @@ import java.util.Date;
 import java.util.Locale;
 
 public class AlarmAdapter extends CursorAdapter {
-    Context mContext;
+    Context mContext;Switch s;
 
 
 
@@ -40,7 +39,7 @@ public class AlarmAdapter extends CursorAdapter {
     public void bindView(View view, Context context, Cursor cursor) {
         final Context c = context;
         TextView tv =(TextView) view.findViewById(R.id.listitem);
-        Switch s = (Switch) view.findViewById(R.id.switch1);
+        s = (Switch) view.findViewById(R.id.switch1);
 
         final int hour = cursor.getInt(cursor.getColumnIndex(AlarmEntry.COLUMN_HOUR));
         final int minute = cursor.getInt(cursor.getColumnIndex(AlarmEntry.COLUMN_MINUTE));
@@ -50,14 +49,12 @@ public class AlarmAdapter extends CursorAdapter {
         //Log.v("Adapter", formatTime(hour, minute));
         tv.setText(formatTime(hour, minute));
 
-        s.setOnCheckedChangeListener(null);
         s.setChecked(flag == 1);
-        s.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        s.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                //Log.v("Inside Checked Change", "HI");
+            public void onClick(View v) {
                 AlarmHelper alarmHelper = new AlarmHelper(c);
-                if(isChecked){
+                if(s.isChecked()){
                     Uri uri = Uri.parse(AlarmProvider.CONTENT_URI+"/"+_ID);
                     ContentValues cv = new ContentValues();
                     cv.put(AlarmEntry.COLUMN_FLAG,1);
@@ -67,10 +64,9 @@ public class AlarmAdapter extends CursorAdapter {
                 else{
                     alarmHelper.cancelSingleAlarm(_ID);
                 }
-
             }
         });
-     }
+    }
 
     public static String formatTime(int hour,int minute){
         Date date = new Date(AlarmHelper.timeInMillis(hour,minute));
