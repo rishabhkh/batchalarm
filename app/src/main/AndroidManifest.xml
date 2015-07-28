@@ -10,9 +10,9 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme"        >
         <activity
-            android:name=".AlarmActivity"
+            android:name="com.rishabhkh.batchalarm.AlarmActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -22,10 +22,10 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".AlarmReceiver" />
+        <receiver android:name="com.rishabhkh.batchalarm.AlarmReceiver" />
 
         <receiver
-            android:name=".AlarmBoot"
+            android:name="com.rishabhkh.batchalarm.AlarmBoot"
             android:enabled="true"
             android:exported="true" >
             <intent-filter>
@@ -35,14 +35,14 @@
 
         <activity
             android:excludeFromRecents="true"
-            android:name=".AlarmNotification"
+            android:name="com.rishabhkh.batchalarm.AlarmNotification"
             android:label="@string/title_activity_alarm_notification"
             android:screenOrientation="portrait">
         </activity>
 
         <provider
             android:authorities="com.rishabhkh.nerdalarm"
-            android:name=".data.AlarmProvider" />
+            android:name="com.rishabhkh.batchalarm.data.AlarmProvider" />
     </application>
 
 </manifest>

@@ -1,7 +1,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.rishabhkh.nerdalarm.AlarmNotification"
+    tools:context="com.rishabhkh.batchalarm.AlarmNotification"
     android:orientation="vertical"
     android:id="@+id/linlayout">
 
@@ -38,8 +38,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="Alarm!"
-            android:textSize="30sp"/>
+            android:text="Alarm"
+            android:textSize="30sp"           />
 
         <TextView
             android:layout_width="match_parent"
