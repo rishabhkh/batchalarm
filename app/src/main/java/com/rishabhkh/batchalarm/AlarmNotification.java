@@ -15,7 +15,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.rishabhkh.nerdalarm.R;
 
@@ -55,27 +54,19 @@ public class AlarmNotification extends Activity {
         Uri alarmUri = Uri.parse(uri);
 
         playAlarm(alarmUri);
-
-
         if(PreferenceManager.getDefaultSharedPreferences(this).getInt("vibrateFlag",0)==1)
         {
             vibrate();
         }
 
         findViewById(R.id.linlayout).setOnTouchListener(new OnSwipeTouchListener(this) {
-            public void onSwipeTop() {
-                Toast.makeText(AlarmNotification.this, "top", Toast.LENGTH_SHORT).show();
-            }
 
             public void onSwipeRight() {
-                Toast.makeText(AlarmNotification.this, "right", Toast.LENGTH_SHORT).show();
-            }
-
-            public void onSwipeLeft() {
-                Toast.makeText(AlarmNotification.this, "left", Toast.LENGTH_SHORT).show();
-            }
-            public void onSwipeBottom() {
-                Toast.makeText(AlarmNotification.this, "bottom", Toast.LENGTH_SHORT).show();
+                if(mediaPlayer != null)
+                    mediaPlayer.release();
+                if(v != null)
+                    v.cancel();
+                AlarmNotification.this.finish();
             }
 
             public boolean onTouch(View v, MotionEvent event) {
@@ -93,8 +84,6 @@ public class AlarmNotification extends Activity {
                     AlarmNotification.this.finish();
                 }
         }, 55000);
-
-
     }
 
     @Override
@@ -129,5 +118,4 @@ public class AlarmNotification extends Activity {
         // Vibrate for 500 milliseconds
         v.vibrate(pattern,0);
     }
-
 }

@@ -36,7 +36,7 @@ import java.util.Calendar;
 
 public class AlarmActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private final int intervalArray[] = {1,5,10,15,20,25,30};
+    private final int intervalArray[] = {1,3,5,10,15,20,25,30};
 
     ListView listView;
     AlarmAdapter alarmAdapter;
@@ -49,35 +49,24 @@ public class AlarmActivity extends AppCompatActivity implements LoaderManager.Lo
     int mHourOfDay;
     int mMinute;
 
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_alarm);
-
         getSupportLoaderManager().initLoader(0, null, this);
-
         setVolumeControlStream(AudioManager.STREAM_ALARM);
 
         FloatingActionButton addButton = (FloatingActionButton)findViewById(R.id.add);
-        //FloatingActionButton deleteButton = (FloatingActionButton)findViewById(R.id.delete);
         listView =(ListView)findViewById(R.id.listview);
+
         listView.setEmptyView(findViewById(R.id.empty));
+
         alarmAdapter = new AlarmAdapter(AlarmActivity.this, null, 0);
         listView.setAdapter(alarmAdapter);
+
         int[] colors = {0, 0xff2d2d2d, 0};
         listView.setDivider(new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, colors));
         listView.setDividerHeight(1);
-
-        contentResolver = getContentResolver();
 
         addButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -87,9 +76,6 @@ public class AlarmActivity extends AppCompatActivity implements LoaderManager.Lo
                 createTimePickerDialog();
             }
         });
-
-
-
     }
 
     @Override
@@ -244,8 +230,6 @@ public class AlarmActivity extends AppCompatActivity implements LoaderManager.Lo
         if (resultCode == Activity.RESULT_OK && requestCode == 5)
         {
             Uri uri = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
-
-
             if (uri != null)
             {
                 SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();

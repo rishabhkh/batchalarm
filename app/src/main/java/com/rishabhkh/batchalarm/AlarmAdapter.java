@@ -23,12 +23,9 @@ import java.util.Locale;
 public class AlarmAdapter extends CursorAdapter {
     Context mContext;
 
-
-
     public AlarmAdapter(Context context, Cursor c,int flags) {
         super(context, c, flags);
         mContext = context;
-
     }
 
     @Override

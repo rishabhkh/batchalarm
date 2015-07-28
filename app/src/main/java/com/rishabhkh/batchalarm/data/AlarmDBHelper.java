@@ -11,10 +11,9 @@ import android.preference.PreferenceManager;
 import com.rishabhkh.batchalarm.data.AlarmContract.AlarmEntry;
 
 public class AlarmDBHelper extends SQLiteOpenHelper {
+
     Context mContext;
-
     private static final int DATABASE_VERSION = 1;
-
     static final String DATABASE_NAME = "alarm.db";
 
     public AlarmDBHelper(Context context) {

@@ -20,7 +20,6 @@ import java.util.Calendar;
 
 
 public class AlarmHelper {
-    final static String TAG = "AlarmHelper";
 
     AlarmManager mAlarmManager;
     Intent mIntent;
@@ -55,11 +54,8 @@ public class AlarmHelper {
             if(toastFlag==1)
                 toastDifference(hour, minute,1);
 
-
-            for(int i=1;i<=numOfAlarms;i++) {
-
+            for(int i=1;i<=numOfAlarms;i++)
                 createSingleAlarm(i, 0, editFlag);
-            }
         }
         cursor.close();
     }
@@ -73,6 +69,7 @@ public class AlarmHelper {
             contentValues.put(AlarmContract.AlarmEntry.COLUMN_FLAG, 1);
             contentResolver.update(uri, contentValues, null, null);
         }
+
         Cursor cursor = contentResolver.query(uri, null, null, null, null);
         cursor.moveToFirst();
         int hour = cursor.getInt(cursor.getColumnIndex(AlarmContract.AlarmEntry.COLUMN_HOUR));
@@ -86,7 +83,7 @@ public class AlarmHelper {
 
         if(flag==1){
             mIntent.putExtra("_ID", _ID);
-            Log.v(TAG, "Setting Alarm:" + _ID+":"+time);
+            Log.v("Helper", "Setting Alarm:" + _ID+":"+time);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 mAlarmManager.setExact(AlarmManager.RTC_WAKEUP, time, getPendingIntent(_ID));
             }
@@ -97,7 +94,7 @@ public class AlarmHelper {
     }
 
     public void cancelSingleAlarm(int _ID){
-        Log.v(TAG, "Cancelling:" + _ID);
+        Log.v("Helper", "Cancelling:" + _ID);
         mAlarmManager.cancel(getPendingIntent(_ID));
         ContentValues contentValues = new ContentValues();
         contentValues.put(AlarmContract.AlarmEntry.COLUMN_FLAG, "0");
@@ -106,7 +103,6 @@ public class AlarmHelper {
     }
 
     public PendingIntent getPendingIntent(int _ID) {
-        //Intent intent = new Intent(mContext, AlarmReceiver.class);
         return PendingIntent.getBroadcast(mContext, _ID, mIntent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 

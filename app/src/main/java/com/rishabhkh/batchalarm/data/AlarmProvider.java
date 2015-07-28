@@ -68,9 +68,7 @@ public class AlarmProvider extends ContentProvider {
         }
         Cursor c = qb.query(db,	projection,	selection, selectionArgs,null, null, sortOrder);
 
-        /**
-         * register to watch a content URI for changes
-         */
+
         c.setNotificationUri(getContext().getContentResolver(), uri);
         return c;
     }

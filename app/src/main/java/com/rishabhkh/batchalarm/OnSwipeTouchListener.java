@@ -26,7 +26,6 @@ public class OnSwipeTouchListener implements View.OnTouchListener {
     }
 
     public boolean onTouch(View v, MotionEvent event) {
-        float a=event.getX();v.setX(a);
         return gestureDetector.onTouchEvent(event);
     }
 
