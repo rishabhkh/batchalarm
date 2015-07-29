@@ -14,7 +14,7 @@ import android.text.TextUtils;
 
 public class AlarmProvider extends ContentProvider {
 
-    static final String PROVIDER_NAME = "com.rishabhkh.nerdalarm";
+    static final String PROVIDER_NAME = "com.rishabhkh.batchalarm";
     static final String URL = "content://" + PROVIDER_NAME + "/alarms";
     public static final Uri CONTENT_URI = Uri.parse(URL);
 

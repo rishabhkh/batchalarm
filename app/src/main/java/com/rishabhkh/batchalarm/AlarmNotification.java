@@ -16,8 +16,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 
-import com.rishabhkh.nerdalarm.R;
-
 import java.util.Calendar;
 
 
@@ -33,11 +31,13 @@ public class AlarmNotification extends Activity {
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN |
                         WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
                         WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
-                        WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN |
+                        WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON |
+                        WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
+                        WindowManager.LayoutParams.FLAG_FULLSCREEN |
                         WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
                         WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
-                        WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+                        WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON |
+                        WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "My Tag");
         wl.acquire();
 

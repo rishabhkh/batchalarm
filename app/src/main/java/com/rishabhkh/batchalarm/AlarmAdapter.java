@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.rishabhkh.nerdalarm.R;
 import com.rishabhkh.batchalarm.data.AlarmContract.AlarmEntry;
 import com.rishabhkh.batchalarm.data.AlarmProvider;
 

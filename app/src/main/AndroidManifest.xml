@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.rishabhkh.nerdalarm" >
+    package="com.rishabhkh.batchalarm" >
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
@@ -41,7 +41,7 @@
         </activity>
 
         <provider
-            android:authorities="com.rishabhkh.nerdalarm"
+            android:authorities="com.rishabhkh.batchalarm"
             android:name="com.rishabhkh.batchalarm.data.AlarmProvider" />
     </application>
 

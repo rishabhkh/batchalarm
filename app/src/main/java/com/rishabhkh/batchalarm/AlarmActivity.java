@@ -27,7 +27,6 @@ import android.widget.ListView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.rishabhkh.nerdalarm.R;
 import com.rishabhkh.batchalarm.data.AlarmContract;
 import com.rishabhkh.batchalarm.data.AlarmProvider;
 
@@ -55,6 +54,7 @@ public class AlarmActivity extends AppCompatActivity implements LoaderManager.Lo
         setContentView(R.layout.activity_alarm);
         getSupportLoaderManager().initLoader(0, null, this);
         setVolumeControlStream(AudioManager.STREAM_ALARM);
+        contentResolver = getContentResolver();
 
         FloatingActionButton addButton = (FloatingActionButton)findViewById(R.id.add);
         listView =(ListView)findViewById(R.id.listview);
